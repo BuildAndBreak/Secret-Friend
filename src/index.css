@@ -2,6 +2,7 @@
   /* Fonts */
   --font-primary: "Poppins", sans-serif;
 
+  --font-xxs: clamp(0.55rem, calc(1vw + 1rem), 0.75rem);
   --font-xs: clamp(0.75rem, calc(1.5vw + 1rem), 1rem);
   --font-sm: clamp(0.875rem, calc(2vw + 1rem), 1.125rem);
   --font-md: clamp(1rem, calc(2.5vw + 1rem), 1.5rem);
@@ -9,9 +10,10 @@
   --font-xl: clamp(2rem, calc(5vw + 1rem), 3.5rem);
 
   /* Padding / Margin */
-  --space-sm: clamp(0.5rem, 1vw, 1rem);
-  --space-md: clamp(1rem, 2vw, 2rem);
-  --space-lg: clamp(1.5rem, 3vw, 3rem);
+  --space-xs: clamp(0.25rem, 0.5vw, 0.4rem);
+  --space-sm: clamp(0.5rem, 1vw, 0.7rem);
+  --space-md: clamp(1rem, 2vw, 1rem);
+  --space-lg: clamp(1.5rem, 3vw, 1.5rem);
 
   /* Main Colors */
   --color-red: #c0392b;

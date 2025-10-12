@@ -1,115 +1,163 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/Form.css";
+import { CircleAlert, ChevronLeft } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Form() {
   const [includeOrganizer, setIncludeOrganizer] = useState(true);
   const [email, setEmail] = useState("");
   const [nameOrganizer, setNameOrganizer] = useState("");
   const [members, setMembers] = useState([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState({ name: "", email: "" });
+  const [step, setStep] = useState(1);
 
   function AddMember() {
-    setMembers((prev) => [...prev, ""]);
+    setMembers((prev) => [...prev, { id: uuidv4(), name: "" }]);
+  }
+
+  function RemoveMember(id) {
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+  }
+
+  function onChangeMember(e, id) {
+    setMembers((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, name: e.target.value } : m))
+    );
   }
 
   function Continue(e) {
     e.preventDefault();
-    if (!e.target.value) {
-      setError("This field is required");
-      return;
+    let isValid = true;
+    if (!nameOrganizer) {
+      setError((prev) => ({ ...prev, name: "This field is required" }));
+      isValid = false;
     }
+
     if (!email) {
-      setError("This field is required");
-      return;
+      setError((prev) => ({ ...prev, email: "Please introduce your email" }));
+      isValid = false;
     }
+
+    if (isValid) setStep(2);
   }
 
-  console.log(members);
+  useEffect(() => {
+    const initialMembers = includeOrganizer ? 3 : 4;
+    setMembers(
+      Array.from({ length: initialMembers }, () => ({
+        id: uuidv4(),
+        name: "",
+      }))
+    );
+  }, [includeOrganizer]);
+
   return (
     <>
-      <form className="container">
-        <p>Organizer</p>
-        <label htmlFor="name">What's your name?</label>
-        <input
-          id="name"
-          type="text"
-          value={nameOrganizer}
-          onChange={(e) => {
-            setNameOrganizer(e.target.value);
-            setError("");
-          }}
-          required
-        />
-        <small>{error}</small>
-        <label>
+      {step === 1 && (
+        <form className="container">
+          <p>Organizer</p>
+
+          <label htmlFor="name">What's your name?</label>
           <input
-            type="checkbox"
-            checked={includeOrganizer}
-            onChange={(e) => setIncludeOrganizer(e.target.checked)}
+            id="name"
+            type="text"
+            value={nameOrganizer}
+            onChange={(e) => {
+              setNameOrganizer(e.target.value);
+              setError((prev) => ({ ...prev, name: "" }));
+            }}
+            required
           />
-          I want to draw names with myself.
-        </label>
 
-        <label htmlFor="email">Email:</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setError("");
-          }}
-          required
-        />
-        <small>{error}</small>
+          <label>
+            <input
+              type="checkbox"
+              checked={includeOrganizer}
+              onChange={(e) => setIncludeOrganizer(e.target.checked)}
+            />
+            I want to draw names with myself.
+          </label>
 
-        <button type="submit" onClick={(e) => Continue(e)}>
-          Continue...
-        </button>
-      </form>
+          {!nameOrganizer && error.name && (
+            <span className="error-container">
+              <CircleAlert /> <small>{error.name}</small>
+            </span>
+          )}
 
-      <form className="container">
-        <p>Family members</p>
-        {nameOrganizer && includeOrganizer && (
-          <>
-            <label htmlFor="organizer">Organizer</label>
-            <input id="organizer" type="text" value={nameOrganizer} disabled />
-          </>
-        )}
+          <label htmlFor="email">Email:</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError((prev) => ({ ...prev, email: "" }));
+            }}
+            required
+          />
 
-        {members.map((member, i) => {
-          const labelNumber = nameOrganizer && includeOrganizer ? i + 2 : i + 1;
-          const inputId = `member-name${i}`;
+          {!email && error.email && (
+            <span className="error-container">
+              <CircleAlert /> <small>{error.email}</small>
+            </span>
+          )}
 
-          return (
-            <div className="members-list" key={i}>
-              <label htmlFor={inputId}>Member {labelNumber}</label>
+          <button type="submit" onClick={(e) => Continue(e)}>
+            Continue...
+          </button>
+        </form>
+      )}
+
+      {step === 2 && (
+        <form className="container">
+          <div className="form-header">
+            <ChevronLeft
+              className="goBack"
+              size={40}
+              onClick={() => setStep(1)}
+            />
+            <p>Family members</p>
+          </div>
+
+          {nameOrganizer && includeOrganizer && (
+            <>
+              <label htmlFor="organizer">Organizer</label>
               <input
-                id={inputId}
+                id="organizer"
                 type="text"
-                value={member}
-                onChange={(e) =>
-                  setMembers((prev) =>
-                    prev.map((m, idx) => (idx === i ? e.target.value : m))
-                  )
-                }
+                value={nameOrganizer}
+                disabled
               />
-              <button
-                onClick={() =>
-                  setMembers((prev) => prev.filter((_, idx) => idx === i))
-                }>
-                Remove
-              </button>
-            </div>
-          );
-        })}
+            </>
+          )}
 
-        <button type="button" onClick={() => AddMember()}>
-          Add member
-        </button>
+          {members.map((member, i) => {
+            const MemberNum = nameOrganizer && includeOrganizer ? i + 2 : i + 1;
+            const inputId = `member-name${i}`;
 
-        <button type="submit">Continue...</button>
-      </form>
+            return (
+              <div className="members-list" key={member.id}>
+                <label htmlFor={inputId}>Member {MemberNum}</label>
+                <input
+                  id={inputId}
+                  type="text"
+                  value={member.name}
+                  onChange={(e) => onChangeMember(e, member.id)}
+                />
+                <span type="button" onClick={() => RemoveMember(member.id)}>
+                  Remove
+                </span>
+              </div>
+            );
+          })}
+
+          <button type="button" onClick={() => AddMember()}>
+            Add member
+          </button>
+
+          <button type="submit">Continue...</button>
+        </form>
+      )}
     </>
   );
 }
