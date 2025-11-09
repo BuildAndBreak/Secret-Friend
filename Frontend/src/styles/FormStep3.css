@@ -1,0 +1,92 @@
+.form-step3 p {
+  font-size: var(--font-md);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.form-step3 aside {
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  font-weight: 300;
+  margin-bottom: var(--space-sm);
+}
+
+.form-step3 li {
+  font-size: var(--font-md);
+  color: var(--color-text-primary);
+  font-weight: 300;
+  list-style: none;
+}
+
+.form-step3 button {
+  width: 100%;
+  height: fit-content;
+  border: 1px solid var(--color-red);
+  border-radius: 0;
+}
+
+.list-members-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-md);
+  font-weight: 400;
+  padding: var(--space-xs);
+  margin: var(--space-md) 0 var(--space-md) 0;
+  border-radius: var(--space-xs);
+  border: 2px solid var(--color-green);
+  color: var(--color-text-primary);
+}
+
+.open {
+  border: 2px solid var(--color-red);
+}
+
+.list-members-container svg {
+  cursor: pointer;
+  background-color: var(--color-white);
+  border: 2px solid var(--color-red);
+  border-radius: 50%;
+  stroke: var(--color-red);
+  width: 30px;
+  stroke-width: 0.2rem;
+  height: 30px;
+  padding: var(--space-xxs);
+}
+
+.list-members-container svg:hover,
+svg:active {
+  stroke: var(--color-text-secondary);
+  background-color: var(--color-red);
+  transition: 400ms;
+}
+
+.exclusions-dropdown {
+  background-color: var(--color-red);
+  border-radius: var(--space-xs);
+  padding: var(--space-xs);
+}
+
+.exclusions-dropdown > label > input[type="checkbox"] {
+  margin-right: var(--space-xxs);
+  width: 18px;
+  height: 18px;
+}
+
+.exclusions-dropdown > label {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-md);
+  border-radius: var(--space-xs);
+  font-weight: 300;
+  padding: var(--space-xxs);
+  cursor: pointer;
+}
+
+.exclusions-dropdown > label:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-white);
+  font-weight: 300;
+}

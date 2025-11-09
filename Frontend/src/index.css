@@ -1,0 +1,46 @@
+:root {
+  /* Fonts */
+  --font-primary: "Poppins", sans-serif;
+
+  --font-xxs: clamp(0.625rem, 0.9vw, 0.75rem);
+  --font-xs: clamp(0.75rem, 1vw, 0.875rem);
+  --font-sm: clamp(0.875rem, 1.2vw, 1rem);
+  --font-md: clamp(1rem, 1.5vw, 1.25rem);
+  --font-lg: clamp(1.25rem, 2vw, 1.75rem);
+  --font-xl: clamp(1.75rem, 3vw, 2.5rem);
+
+  /* Padding / Margin */
+  --space-xxs: clamp(0.25rem, 0.5vw, 0.375rem);
+  --space-xs: clamp(0.375rem, 0.8vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 1vw, 0.75rem);
+  --space-md: clamp(0.75rem, 1.5vw, 1rem);
+  --space-lg: clamp(1rem, 2vw, 1.5rem);
+  --space-xl: clamp(1.5rem, 3vw, 2.5rem);
+
+  /* Main Colors */
+  --color-red: #c0392b;
+  --color-green: #27ae60;
+  --color-gold: #f1c40f;
+
+  /* Secundary Colors */
+  --color-white: #ffffff;
+  --color-light-gray: #f7f7f7;
+  --color-dark-gray: #333333;
+
+  /* Buttons / hover */
+  --color-btn-primary: var(--color-red);
+  --color-btn-primary-hover: #e74c3c;
+  --color-btn-secondary: var(--color-green);
+  --color-btn-secondary-hover: #2ecc71;
+
+  /* Text */
+  --color-text-primary: var(--color-dark-gray);
+  --color-text-secondary: var(--color-white);
+}
+
+* {
+  font-family: var(--font-primary);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,151 @@
+.container {
+  width: 360px;
+  border-radius: var(--space-lg);
+  box-shadow: 2px 2px 10px var(--color-dark-gray);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background-color: var(--color-light-gray);
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+h2 {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-red);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  background-color: var(--color-light-gray);
+}
+
+form label {
+  font-size: var(--font-md);
+  font-weight: 500;
+  color: var(--color-gold);
+}
+
+form input[type="text"],
+input[type="email"] {
+  width: 100%;
+  font-size: var(--font-md);
+  padding: var(--space-xs);
+  border-radius: var(--space-xs);
+  border: 2px solid var(--color-green);
+  color: var(--color-text-primary);
+}
+
+form input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+form label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-primary);
+  font-weight: 300;
+  font-size: var(--font-sm);
+  gap: 0.5rem;
+}
+
+form button[type="button"] {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm);
+  margin-top: var(--space-sm);
+  border: none;
+  border-radius: var(--space-xs);
+  background-color: var(--color-btn-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+form button[type="button"]:hover {
+  background-color: var(--color-btn-secondary-hover);
+  transition: 400ms;
+}
+
+form button[type="submit"] {
+  width: 100%;
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  border: none;
+  border-radius: var(--space-md);
+  background-color: var(--color-btn-primary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-md);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+  background-color: var(--color-btn-primary-hover);
+  transition: 400ms;
+}
+
+form span[type="button"] {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: var(--space-xs);
+  border-radius: 50%;
+}
+
+form span[type="button"]:hover {
+  background-color: var(--color-btn-primary-hover);
+  transition: 400ms;
+  svg {
+    stroke: var(--color-text-secondary);
+    transition: 400ms;
+  }
+}
+
+small {
+  color: var(--color-red);
+  font-weight: 600;
+  font-size: var(--font-xs);
+  margin-left: var(--space-xxs);
+}
+
+.input-remove-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.goBack {
+  cursor: pointer;
+}
+
+.error-container {
+  display: flex;
+  align-items: center;
+}
+
+.error-container > svg {
+  color: var(--color-red);
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (width <= 375px) {
+  .container {
+    max-width: 300px;
+  }
+}
