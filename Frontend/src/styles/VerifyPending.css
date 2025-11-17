@@ -1,0 +1,29 @@
+.verify-pending h3 {
+  margin: var(--space-md) 0;
+}
+
+.verify-pending button {
+  width: 100%;
+  padding: var(--space-sm);
+  margin: var(--space-md) 0;
+  border: none;
+  border-radius: var(--space-md);
+  background-color: var(--color-btn-primary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-md);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.verify-pending button:hover {
+  background-color: var(--color-btn-primary-hover);
+  transition: 400ms;
+}
+
+.success-message {
+  color: var(--color-green);
+}
+
+.verify-pending .info-spam {
+  margin: var(--space-md) 0;
+}

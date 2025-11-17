@@ -1,17 +1,18 @@
 import "./App.css";
-import Form from "./components/Form.jsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import VerifyPage from "./pages/VerifyPage.jsx";
+import InvitePage from "./pages/InvitePage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 
 function App() {
   return (
-    <div className="App">
-      <main>
-        <header>
-          <h1>Secret Santa</h1>
-        </header>
-        <Form />
-      </main>
-      <footer>Secret Santa 2025</footer>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/verify" element={<VerifyPage />} />
+        <Route path="/i/:token" element={<InvitePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

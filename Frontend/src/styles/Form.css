@@ -13,12 +13,6 @@
   gap: var(--space-md);
 }
 
-h2 {
-  font-size: var(--font-lg);
-  font-weight: 700;
-  color: var(--color-red);
-}
-
 form {
   display: flex;
   flex-direction: column;
@@ -132,6 +126,7 @@ small {
 .error-container {
   display: flex;
   align-items: center;
+  gap: var(--space-xxs);
 }
 
 .error-container > svg {
@@ -141,7 +136,17 @@ small {
 .members-list {
   display: flex;
   flex-direction: column;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin: 0.3rem 0;
   gap: 0.5rem;
+}
+
+.member-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media (width <= 375px) {

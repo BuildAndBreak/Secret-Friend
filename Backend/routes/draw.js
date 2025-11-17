@@ -26,18 +26,20 @@ function buildParticipants(members, includeOrganizer, organizerName) {
 }
 
 function normalizeExclusions(exclusions, participantIds) {
-  const map = new Map(),
-    valid = new Set(participantIds);
+  const map = new Map();
+  const valid = new Set(participantIds);
+
   for (const id of participantIds) map.set(id, new Set());
+
   for (const e of Array.isArray(exclusions) ? exclusions : []) {
-    const owner = String(e?.id ?? "").trim();
-    if (!valid.has(owner)) continue;
+    const giver = String(e?.id ?? "").trim();
+    if (!valid.has(giver)) continue;
+
     for (const raw of e?.excludedMemberIds ?? []) {
-      const t = String(raw ?? "").trim();
-      if (valid.has(t) && t !== owner) {
-        map.get(owner).add(t);
-        map.get(t).add(owner);
-      }
+      const receiver = String(raw ?? "").trim();
+      if (!valid.has(receiver)) continue; // never self-exclude protection
+      if (receiver === giver) continue; // only giver -> receiver (directional)
+      map.get(giver).add(receiver);
     }
   }
   for (const id of participantIds) map.get(id).delete(id);
@@ -128,7 +130,7 @@ router.post("/", async (req, res) => {
       includeOrganizer,
       organizerName
     );
-    const MIN = 4;
+    const MIN = 3;
     if (participantIds.length < MIN)
       return res.status(400).json({ message: `At least ${MIN} participants` });
 

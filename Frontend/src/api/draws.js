@@ -3,7 +3,7 @@ export const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 async function parseErrorResponse(res) {
   const ct = res.headers.get("content-type") || "";
-  // Prefer JSON errors from the backend, but fall back to text gracefully
+
   if (ct.includes("application/json")) {
     const data = await res.json();
     const messages = [];

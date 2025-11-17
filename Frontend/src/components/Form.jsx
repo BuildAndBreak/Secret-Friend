@@ -3,6 +3,7 @@ import "../styles/Form.css";
 import { CircleAlert } from "lucide-react";
 import FormStep2 from "./FormStep2";
 import FormStep3 from "./FormStep3";
+import VerifyPending from "./VerifyPending";
 
 export default function Form() {
   const [includeOrganizer, setIncludeOrganizer] = useState(true);
@@ -110,6 +111,7 @@ export default function Form() {
         setMembers={setMembers}
         requireInvites={requireInvites}
         setRequireInvites={setRequireInvites}
+        emailOrganizer={email}
       />
 
       {/* FORM PART 3*/}
@@ -122,6 +124,15 @@ export default function Form() {
         setError={setError}
         email={email}
         setRequireInvites={setRequireInvites}
+      />
+
+      {/* VERIFY PENDING */}
+      <VerifyPending
+        step={step}
+        nameOrganizer={nameOrganizer}
+        email={email}
+        setError={setError}
+        error={error}
       />
     </>
   );

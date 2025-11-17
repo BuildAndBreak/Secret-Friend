@@ -1,5 +1,6 @@
 import express from "express";
 import Draw from "../models/Draw.js";
+import { nanoid } from "nanoid";
 
 const router = express.Router();
 const ORGANIZER = "organizer";

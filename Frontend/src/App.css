@@ -1,8 +1,3 @@
-h1 {
-  font-size: var(--font-xl);
-  color: var(--color-text-secondary);
-}
-
 .App {
   min-height: 100vh;
   display: flex;
@@ -17,6 +12,23 @@ body {
 header {
   align-self: center;
   margin-bottom: var(--space-xl);
+}
+
+h1 {
+  font-size: var(--font-xl);
+  color: var(--color-text-secondary);
+}
+
+h2 {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-red);
+}
+
+h3 {
+  font-size: var(--font-md);
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 main {
