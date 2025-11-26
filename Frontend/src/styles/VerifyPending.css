@@ -20,10 +20,28 @@
   transition: 400ms;
 }
 
-.success-message {
+.verify-pending .sucess-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-md) 0;
+}
+
+.verify-pending .active-message {
   color: var(--color-green);
 }
 
 .verify-pending .info-spam {
   margin: var(--space-md) 0;
+}
+
+.verify-pending .status-message {
+  display: flex;
+  border: 2px solid var(--color-btn-primary);
+  border-radius: var(--space-md);
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  gap: var(--space-sm);
+  margin: var(--space-xl) 0;
 }

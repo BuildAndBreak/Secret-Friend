@@ -14,6 +14,16 @@ if (process.env.SMTP_HOST) {
   });
 }
 
+if (transporter) {
+  transporter.verify((err) => {
+    if (err) {
+      console.error("SMTP error:", err);
+    } else {
+      console.log("SMTP ready to send emails");
+    }
+  });
+}
+
 export async function sendMail({ to, subject, html }) {
   // dev
   if (!transporter) {
@@ -23,7 +33,7 @@ export async function sendMail({ to, subject, html }) {
 
   // produção
   return transporter.sendMail({
-    from: process.env.MAIL_FROM || "Secret Santa <no-reply@secretsanta.local>",
+    from: process.env.SENDER_EMAIL,
     to,
     subject,
     html,

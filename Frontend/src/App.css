@@ -16,19 +16,17 @@ header {
 
 h1 {
   font-size: var(--font-xl);
-  color: var(--color-text-secondary);
+  font-weight: 800;
 }
 
 h2 {
   font-size: var(--font-lg);
-  font-weight: 700;
-  color: var(--color-red);
+  font-weight: 600;
 }
 
 h3 {
   font-size: var(--font-md);
-  font-weight: 500;
-  color: var(--color-text-primary);
+  font-weight: 400;
 }
 
 main {

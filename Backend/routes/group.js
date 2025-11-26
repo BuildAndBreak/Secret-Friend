@@ -2,54 +2,33 @@ import express from "express";
 import Draw from "../models/Draw.js";
 import { sendMail } from "../utils/mailer.js";
 import { nanoid } from "nanoid";
+import {
+  verifyEmail,
+  membersEmail,
+  organizerEmail,
+} from "../utils/template.js";
 
 const router = express.Router();
-const ORGANIZER = "organizer";
 
 // Build { id -> name } (includes organizer)
 function namesById(draw) {
   const map = Object.fromEntries(draw.members.map((m) => [m.id, m.name]));
-  if (draw.includeOrganizer && draw.organizer) map[ORGANIZER] = draw.organizer;
   return map;
 }
-
-// GET /api/groups/:code/meta  -> participants for the single shared link page
-router.get("/:code/meta", async (req, res) => {
-  try {
-    const { code } = req.params;
-    const draw = await Draw.findOne({ groupCode: code });
-    if (!draw) return res.status(404).json({ message: "Group not found" });
-
-    const list = draw.members.map((m) => ({ id: m.id, name: m.name }));
-    if (draw.includeOrganizer && draw.organizer)
-      list.unshift({ id: ORGANIZER, name: draw.organizer });
-
-    res.json({
-      drawId: draw._id.toString(),
-      groupCode: draw.groupCode,
-      participants: list,
-      poll: draw.giftPoll?.options ?? [],
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-});
 
 // Start verification (emails the organizer with a verify link).
 router.post("/:code/initiate-verification", async (req, res) => {
   const { code } = req.params;
   const draw = await Draw.findOne({ groupCode: code });
+
   if (!draw) return res.status(404).json({ message: "Group not found" });
-  if (!draw.requireInvites)
-    return res
-      .status(400)
-      .json({ message: "Invites mode is off for this group." });
+
   if (draw.status !== "awaiting_organizer_verify") {
     return res.status(400).json({
       message: `Group is ${draw.status}, cannot initiate verification.`,
     });
   }
+
   if (!draw.organizerVerifyToken) {
     draw.organizerVerifyToken = nanoid(32);
     await draw.save();
@@ -63,15 +42,25 @@ router.post("/:code/initiate-verification", async (req, res) => {
 
   await sendMail({
     to: draw.email,
-    subject: "Confirm your Secret Santa group",
-    html: `
-      <p>Hi ${draw.organizer},</p>
-      <p>Confirm your group to send invites to participants.</p>
-      <p><a href="${verifyUrl}">Verify my group</a></p>
-    `,
+    subject: "Confirm Secret Santa Group",
+    html: verifyEmail({ draw, verifyUrl }),
   });
 
   res.json({ ok: true });
+});
+
+router.get("/:code/status", async (req, res) => {
+  try {
+    const { code } = req.params;
+    const draw = await Draw.findOne({ groupCode: code });
+
+    if (!draw) return res.status(404).json({ message: "Group not found" });
+
+    res.json({ status: draw.status });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // Verify organizer (activates the group, then sends member invites).
@@ -79,16 +68,15 @@ router.get("/:code/verify", async (req, res) => {
   const { code } = req.params;
   const { t } = req.query;
   const draw = await Draw.findOne({ groupCode: code });
+
   if (!draw) return res.status(404).json({ message: "Group not found" });
-  if (!draw.requireInvites)
-    return res
-      .status(400)
-      .json({ message: "Invites mode is off for this group." });
+
   if (draw.status !== "awaiting_organizer_verify") {
     return res
       .status(400)
       .json({ message: `Group is ${draw.status}, nothing to verify.` });
   }
+
   if (!t || t !== draw.organizerVerifyToken) {
     return res.status(400).json({ message: "Invalid or missing token" });
   }
@@ -101,14 +89,15 @@ router.get("/:code/verify", async (req, res) => {
   for (const m of draw.members) {
     if (!m.email || !m.inviteToken) continue;
     const url = `${base}/i/${m.inviteToken}`;
+    const emailToOrganizer =
+      m.email === draw.email && m.name === draw.organizer;
+
     await sendMail({
       to: m.email,
       subject: "You're in Secret Santa!",
-      html: `
-        <p>Hi ${m.name},</p>
-        <p>Your organizer (${draw.organizer}) has added you to Secret Santa.</p>
-        <p><a href="${url}">Open my private page</a></p>
-      `,
+      html: emailToOrganizer
+        ? organizerEmail({ draw, url })
+        : membersEmail({ m, draw, url }),
     });
     m.inviteSentAt = new Date();
   }
@@ -135,7 +124,7 @@ router.post("/:code/reveal", async (req, res) => {
     res.json({
       fromId: memberId,
       toId: pair.toId,
-      toName: map[pair.toId] || "Unknown",
+      toName: map[pair.toId],
     });
   } catch (err) {
     console.error(err);

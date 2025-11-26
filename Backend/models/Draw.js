@@ -45,7 +45,6 @@ const WishlistSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// Optional group poll for gift value
 const PollVoteSchema = new mongoose.Schema(
   {
     memberId: { type: String, required: true, trim: true },
@@ -58,6 +57,7 @@ const GiftPollSchema = new mongoose.Schema(
   {
     options: { type: [Number], default: [10, 15, 20, 25, 30] },
     votes: { type: [PollVoteSchema], default: [] },
+    lockedAt: { type: Date },
   },
   { _id: false }
 );
@@ -79,7 +79,6 @@ const DrawSchema = new mongoose.Schema(
     exclusions: { type: [ExclusionSchema], default: [] },
     wishes: { type: [WishlistSchema], default: [] }, // [{ ownerId, items[] }]
     giftPoll: { type: GiftPollSchema, default: () => ({}) }, // poll options + votes
-    requireInvites: { type: Boolean, default: false }, // toggles email-invite mode
     organizerVerifyToken: { type: String, index: true },
     organizerVerifiedAt: Date,
     status: {

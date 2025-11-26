@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { API } from "../api/draws";
-import { CircleAlert, CheckCircle2, ChevronLeft } from "lucide-react";
+import { CircleAlert, CheckCircle2 } from "lucide-react";
 import "../styles/VerifyPending.css";
+import { ClipLoader } from "react-spinners";
 
 export default function VerifyPending({
   step,
@@ -11,7 +12,21 @@ export default function VerifyPending({
   setError,
   cooldownSecs = 30,
 }) {
+  // BroadcastChannel listener for instant update
+  useEffect(() => {
+    const channel = new BroadcastChannel("secret-santa-status");
+    channel.onmessage = (e) => {
+      if (e.data?.verified) {
+        localStorage.removeItem("secret-santa:LastGroup");
+        setGroupStatus("active");
+      }
+    };
+
+    return () => channel.close();
+  }, []);
+
   let lastGroup = null;
+
   if (typeof window !== "undefined") {
     const raw = localStorage.getItem("secret-santa:lastGroup");
     try {
@@ -23,6 +38,48 @@ export default function VerifyPending({
 
   const groupCode = lastGroup?.groupCode ?? null;
 
+  const [groupStatus, setGroupStatus] = useState("checking");
+
+  // Polling for group status, every 3s (fallback)
+  useEffect(() => {
+    if (!groupCode) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`${API}/api/groups/${groupCode}/status`);
+
+        if (res.status === 404) {
+          console.warn("Group code no longer exists, clearing localStorage");
+          localStorage.removeItem("secret-santa:lastGroup");
+          setGroupStatus("error");
+          clearInterval(interval);
+          return;
+        }
+
+        if (!res.ok) {
+          console.error("Server error:", res.status);
+          return;
+        }
+
+        const data = await res.json();
+
+        if (data.status === "active") {
+          clearInterval(interval);
+          localStorage.removeItem("secret-santa:lastGroup");
+          setGroupStatus("active");
+          return;
+        } else {
+          setGroupStatus("awaiting");
+        }
+      } catch (err) {
+        console.error("Error checking group status:", err);
+        setGroupStatus("error");
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [groupCode]);
+
   const [isSending, setIsSending] = useState(false);
   const [resendOk, setResendOk] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(() => {
@@ -31,7 +88,7 @@ export default function VerifyPending({
     return until > now ? Math.ceil((until - now) / 1000) : 0;
   });
 
-  // cooldown ticker
+  // cooldown ticker resend email
   useEffect(() => {
     if (secondsLeft <= 0) {
       setResendOk(false);
@@ -100,48 +157,98 @@ export default function VerifyPending({
 
   return (
     <div className="container verify-pending">
-      <h2>Almost there, {nameOrganizer}!</h2>
+      <div>
+        {groupStatus === "active" && (
+          <div>
+            <div className="sucess-container">
+              <CheckCircle2 size={26} stroke="var(--color-green)" />
+              <span className="active-message">
+                Your group has been verified!
+              </span>
+            </div>
 
-      <h3>
-        We've sent a verification email to <strong>{email}</strong>.
-      </h3>
+            <button
+              type="button"
+              className="go-private-btn"
+              onClick={() =>
+                (window.location.href = `/verified?code=${groupCode}`)
+              }>
+              Continue →
+            </button>
+          </div>
+        )}
+      </div>
 
-      <p>
-        Please check your inbox and click the verification link to complete the
-        setup of your Secret Santa group.
-      </p>
+      {groupStatus !== "active" && (
+        <>
+          <h2>Almost there, {nameOrganizer}!</h2>
 
-      <p className="info-spam">
-        If you don't see the email, check your <strong>Spam</strong>/
-        <strong>Junk</strong> folder and search for “Secret&nbsp;Santa
-        verification”.
-      </p>
+          <h3>
+            We've sent a verification email to <strong>{email}</strong>.
+          </h3>
 
-      <button
-        type="button"
-        onClick={resendEmail}
-        disabled={isSending || secondsLeft > 0}
-        aria-disabled={isSending || secondsLeft > 0}>
-        {isSending
-          ? "Resending…"
-          : secondsLeft > 0
-          ? `Resend Email (${secondsLeft}s)`
-          : "Resend Email"}
-      </button>
+          {groupStatus === "checking" && (
+            <span className="status-message">
+              Checking status...
+              <ClipLoader size={30} color={"var(--color-red)"} loading />
+            </span>
+          )}
 
-      {resendOk && (
-        <span className="error-container" role="status" aria-live="polite">
-          <CheckCircle2 stroke="green" />
-          <small className="success-message">
-            Verification email sent. Please check your inbox.
-          </small>
-        </span>
-      )}
+          {groupStatus === "awaiting" && (
+            <span className="status-message">
+              Verification in progress...
+              <ClipLoader size={30} color={"var(--color-red)"} loading />
+            </span>
+          )}
 
-      {error.resend && (
-        <span className="error-container" role="alert">
-          <CircleAlert /> <small>{error.resend}</small>
-        </span>
+          <p>
+            Please check your inbox and click the verification link to complete
+            the setup of your Secret Santa group.
+          </p>
+
+          <p className="info-spam">
+            If you don't see the email, check your <strong>Spam</strong>/
+            <strong>Junk</strong> folder and search for “Confirm
+            Secret&nbsp;Santa Group”.
+          </p>
+
+          <button
+            type="button"
+            onClick={resendEmail}
+            disabled={isSending || secondsLeft > 0}
+            aria-disabled={isSending || secondsLeft > 0}>
+            {isSending
+              ? "Resending…"
+              : secondsLeft > 0
+              ? `Resend Email (${secondsLeft}s)`
+              : "Resend Email"}
+          </button>
+
+          {resendOk && (
+            <span className="error-container" role="status" aria-live="polite">
+              <CheckCircle2 stroke="green" />
+              <small className="success-message">
+                Verification email sent. Please check your inbox.
+              </small>
+            </span>
+          )}
+
+          {error.resend && (
+            <span className="error-container" role="alert">
+              <CircleAlert /> <small>{error.resend}</small>
+            </span>
+          )}
+
+          {groupStatus === "error" && (
+            <div className="status-message">
+              <CircleAlert size={26} stroke="var(--color-red)" />
+              <span style={{ color: "var(--color-red)" }}>
+                Could not verify this group.
+              </span>
+              <small>Please create a new group.</small>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

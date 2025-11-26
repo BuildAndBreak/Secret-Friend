@@ -3,11 +3,10 @@ import Draw from "../models/Draw.js";
 import { nanoid } from "nanoid";
 
 const router = express.Router();
-const ORGANIZER = "organizer";
 
 function namesById(draw) {
   const map = Object.fromEntries(draw.members.map((m) => [m.id, m.name]));
-  if (draw.includeOrganizer && draw.organizer) map[ORGANIZER] = draw.organizer;
+  console.log("Names by ID map:", map);
   return map;
 }
 
@@ -18,8 +17,10 @@ async function findByToken(token) {
 router.get("/:token", async (req, res) => {
   const { token } = req.params;
   const draw = await findByToken(token);
+
   if (!draw) return res.status(404).json({ message: "Invite not found" });
-  if (draw.requireInvites && draw.status !== "active") {
+
+  if (draw.status !== "active") {
     return res.status(403).json({ message: "Group not active yet" });
   }
 
@@ -36,9 +37,13 @@ router.get("/:token", async (req, res) => {
   const items = bucket?.items || [];
 
   // member's poll vote
-  const vote =
-    (draw.giftPoll?.votes || []).find((v) => v.memberId === member.id)
-      ?.option ?? null;
+  const votes = draw.giftPoll?.votes;
+  const memberVote = votes?.find((v) => v.memberId === member.id) || null;
+  const allVoted = draw.members.every((m) =>
+    votes?.some((v) => v.memberId === m.id)
+  );
+
+  const canReveal = allVoted;
 
   res.json({
     groupCode: draw.groupCode,
@@ -47,7 +52,13 @@ router.get("/:token", async (req, res) => {
     toId,
     toName,
     wishlist: items,
-    poll: { options: draw.giftPoll?.options || [], myVote: vote },
+    poll: {
+      options: draw.giftPoll?.options || [],
+      selected: memberVote ? memberVote.option : null,
+      allVoted,
+    },
+    toId: canReveal && toId ? toId : null,
+    toName: canReveal && toName ? toName : null,
     messages: draw.messages?.slice(-50) || [], // last 50 msgs
   });
 });

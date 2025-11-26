@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 export default function InvitePage() {
   const { token } = useParams();
@@ -21,8 +22,9 @@ export default function InvitePage() {
     loadMember();
   }, [token]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <ClipLoader />;
   if (!member) return <p>Invalid or expired link.</p>;
+  console.log(member);
 
   return (
     <div style={{ padding: 20 }}>

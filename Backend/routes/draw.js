@@ -8,9 +8,8 @@ const nano = customAlphabet(
   "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
   8
 );
-const ORGANIZER = "organizer";
 
-// ---- helpers - Fisher-Yates shuffle algorithm
+// Fisher-Yates shuffle algorithm
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -18,11 +17,6 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-function buildParticipants(members, includeOrganizer, organizerName) {
-  const ids = members.map((m) => m.id);
-  return includeOrganizer && organizerName ? [ORGANIZER, ...ids] : ids;
 }
 
 function normalizeExclusions(exclusions, participantIds) {
@@ -112,6 +106,7 @@ router.post("/", async (req, res) => {
     }
     const organizerName = organizer.trim();
     const organizerEmail = email.trim().toLowerCase();
+
     const cleanMembers = members
       .map((m) => ({
         id: String(m?.id || "").trim(),
@@ -120,25 +115,31 @@ router.post("/", async (req, res) => {
       }))
       .filter((m) => m.id && m.name && m.email);
 
+    let participants = [...cleanMembers];
+
+    let organizerMemberId = null;
+    if (includeOrganizer) {
+      organizerMemberId = nano(16);
+      participants.push({
+        id: organizerMemberId,
+        name: organizerName,
+        email: organizerEmail,
+      });
+    }
+
     // unique IDs
-    const idSet = new Set(cleanMembers.map((m) => m.id));
-    if (idSet.size !== cleanMembers.length)
+    const idSet = new Set(participants.map((m) => m.id));
+    if (idSet.size !== participants.length)
       return res.status(400).json({ message: "Member IDs must be unique" });
 
-    const participantIds = buildParticipants(
-      cleanMembers,
-      includeOrganizer,
-      organizerName
-    );
+    const participantIds = participants.map((m) => m.id);
+
     const MIN = 3;
     if (participantIds.length < MIN)
       return res.status(400).json({ message: `At least ${MIN} participants` });
 
     // names unique (defensive)
-    const names = [
-      ...cleanMembers.map((m) => m.name),
-      ...(includeOrganizer && organizerName ? [organizerName] : []),
-    ];
+    const names = participants.map((m) => m.name);
     if (new Set(names).size !== names.length)
       return res.status(400).json({ message: "Names must be unique" });
 
@@ -157,10 +158,11 @@ router.post("/", async (req, res) => {
       fromId: ownerId,
       toId: assignment.get(ownerId),
     }));
+
     const groupCode = nano(32);
 
     const emailSet = new Set();
-    for (const m of cleanMembers) {
+    for (const m of participants) {
       const e = (m.email || "").trim().toLowerCase();
       if (!e)
         return res
@@ -174,7 +176,7 @@ router.post("/", async (req, res) => {
     }
 
     // Prepare members with tokens
-    const membersToSave = cleanMembers.map((m) => ({
+    const membersToSave = participants.map((m) => ({
       id: m.id,
       name: m.name,
       email: m.email.trim().toLowerCase(),
@@ -192,7 +194,6 @@ router.post("/", async (req, res) => {
       pairs,
       giftPoll: { options: [10, 15, 20, 25, 30], votes: [] },
       wishes: [],
-      requireInvites: true, // invites always
       status: "awaiting_organizer_verify", // locked until organizer verifies
       organizerVerifyToken: nano(32),
     });
