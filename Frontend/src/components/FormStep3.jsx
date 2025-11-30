@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronDown, X } from "lucide-react";
 import "../styles/FormStep3.css";
 import { createDraw, serializeExclusions } from "../api/draws";
 import { API } from "../api/draws";
+import { ClipLoader } from "react-spinners";
 
 export default function FormStep3({
   step,
@@ -15,16 +16,16 @@ export default function FormStep3({
   email,
 }) {
   const [dropdownMemberId, setDropdownMemberId] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   /**
-   * EXCLUSIONS (directional):
-   * 'exclusions[giverId]' is a Set of receiverIds the giver CANNOT give to.
-   * Example: exclusions["A"] = Set(["B"]) → A cannot give to B.
+    EXCLUSIONS (directional):
+   'exclusions[giverId]' is a Set of receiverIds the giver CANNOT give to.
+    Example: exclusions["A"] = Set(["B"]) → A cannot give to B.
    */
-  const [exclusions, setExclusions] = useState({}); // start with empty map
+  const [exclusions, setExclusions] = useState({});
 
-  const ORGANIZER = "organizer"; // special id used when organizer participates
-  const organizerName = (nameOrganizer || "").trim(); // normalized organizer name (empty string if undefined/null)
+  const ORGANIZER = "organizer";
+  const organizerName = (nameOrganizer || "").trim();
 
   // Build the participants list of ids, in a stable order.
   const participants = useMemo(() => {
@@ -138,9 +139,9 @@ export default function FormStep3({
   // ---------- SUBMISSION ----------
   async function submitData(e) {
     e?.preventDefault();
-
+    setLoading(true);
+    // payload the backend expects
     const payload = {
-      // build the payload the backend expects
       organizer: organizerName,
       email,
       includeOrganizer,
@@ -183,19 +184,18 @@ export default function FormStep3({
   if (step !== 3) return null;
 
   return (
-    <form className="container form-step3" onSubmit={submitData}>
+    <form className="container step-3" onSubmit={submitData}>
       <div className="form-header">
-        <span type="button">
+        <button type="button" aria-label="Back" className="icon-button">
           <ChevronLeft
-            style={{ marginRight: ".2rem" }}
             className="goBack"
-            size={40}
+            size={28}
             onClick={() => {
-              setStep(2); // go back to previous step
+              setStep(2);
               setError?.({}); // clear errors if parent passed setError
             }}
           />
-        </span>
+        </button>
         <h2>Exclusions</h2>
       </div>
       <div>
@@ -308,7 +308,13 @@ export default function FormStep3({
           );
         })}
       </div>
-      <button type="submit">Create Secret Santa</button>
+
+      <button className="submit-btn" type="submit">
+        Create Secret Santa{" "}
+        {loading && (
+          <ClipLoader size={30} color={"var(--color-white)"} loading />
+        )}
+      </button>
     </form>
   );
 }

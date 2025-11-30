@@ -1,31 +1,37 @@
-.form-step3 p {
+.step-3 .form-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.step-3 p {
   font-size: var(--font-md);
   color: var(--color-text-primary);
   font-weight: 500;
 }
 
-.form-step3 aside {
+.step-3 aside {
   font-size: var(--font-sm);
   color: var(--color-text-primary);
   font-weight: 300;
   margin-bottom: var(--space-sm);
 }
 
-.form-step3 li {
+.step-3 li {
   font-size: var(--font-md);
   color: var(--color-text-primary);
   font-weight: 300;
   list-style: none;
 }
 
-.form-step3 button {
+.step-3 button {
   width: 100%;
   height: fit-content;
   border: 1px solid var(--color-red);
   border-radius: 0;
 }
 
-.list-members-container {
+.step-3 .list-members-container {
   width: 100%;
   display: flex;
   align-items: center;
@@ -39,11 +45,11 @@
   color: var(--color-text-primary);
 }
 
-.open {
+.step-3 .open {
   border: 2px solid var(--color-red);
 }
 
-.list-members-container svg {
+.step-3 .list-members-container svg {
   cursor: pointer;
   background-color: var(--color-white);
   border: 2px solid var(--color-red);
@@ -55,26 +61,26 @@
   padding: var(--space-xxs);
 }
 
-.list-members-container svg:hover,
+.step-3 .list-members-container svg:hover,
 svg:active {
   stroke: var(--color-text-secondary);
   background-color: var(--color-red);
   transition: 400ms;
 }
 
-.exclusions-dropdown {
+.step-3 .exclusions-dropdown {
   background-color: var(--color-red);
   border-radius: var(--space-xs);
   padding: var(--space-xs);
 }
 
-.exclusions-dropdown > label > input[type="checkbox"] {
+.step-3 .exclusions-dropdown > label > input[type="checkbox"] {
   margin-right: var(--space-xxs);
   width: 18px;
   height: 18px;
 }
 
-.exclusions-dropdown > label {
+.step-3 .exclusions-dropdown > label {
   display: flex;
   align-items: center;
   color: var(--color-text-secondary);
@@ -85,8 +91,30 @@ svg:active {
   cursor: pointer;
 }
 
-.exclusions-dropdown > label:hover {
+.step-3 .exclusions-dropdown > label:hover {
   color: var(--color-text-primary);
   background-color: var(--color-white);
   font-weight: 300;
+}
+
+.step-3 .submit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  background-color: var(--color-red);
+  color: var(--color-white);
+  font-size: var(--font-md);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--space-md);
+  cursor: pointer;
+}
+
+.step-3 .submit-btn:hover {
+  background-color: var(--color-btn-primary-hover);
+  transition: 0.3s;
 }

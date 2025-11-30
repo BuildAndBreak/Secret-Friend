@@ -9,24 +9,28 @@ body {
   background: no-repeat center/cover url("/background-mobile.jpg");
 }
 
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-lg);
+  border-radius: var(--space-lg);
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-cream);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: 2rem auto;
+  font-family: var(--font-primary);
+}
+
 header {
   align-self: center;
   margin-bottom: var(--space-xl);
 }
 
-h1 {
-  font-size: var(--font-xl);
-  font-weight: 800;
-}
-
 h2 {
   font-size: var(--font-lg);
-  font-weight: 600;
-}
-
-h3 {
-  font-size: var(--font-md);
-  font-weight: 400;
+  color: var(--color-red);
 }
 
 main {

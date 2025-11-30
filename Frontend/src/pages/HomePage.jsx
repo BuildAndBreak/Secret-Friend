@@ -6,7 +6,7 @@ export default function HomePage() {
     <div className="App">
       <main>
         <header>
-          <h1>Secret Santa</h1>
+          <h1 style={{ color: "var(--color-white)" }}>Secret Santa</h1>
         </header>
         <Form />
       </main>

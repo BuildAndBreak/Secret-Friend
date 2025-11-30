@@ -3,6 +3,7 @@ import { API } from "../api/draws";
 import { CircleAlert, CheckCircle2 } from "lucide-react";
 import "../styles/VerifyPending.css";
 import { ClipLoader } from "react-spinners";
+import ActiveGroup from "./ActiveGroup";
 
 export default function VerifyPending({
   step,
@@ -157,28 +158,7 @@ export default function VerifyPending({
 
   return (
     <div className="container verify-pending">
-      <div>
-        {groupStatus === "active" && (
-          <div>
-            <div className="sucess-container">
-              <CheckCircle2 size={26} stroke="var(--color-green)" />
-              <span className="active-message">
-                Your group has been verified!
-              </span>
-            </div>
-
-            <button
-              type="button"
-              className="go-private-btn"
-              onClick={() =>
-                (window.location.href = `/verified?code=${groupCode}`)
-              }>
-              Continue →
-            </button>
-          </div>
-        )}
-      </div>
-
+      {/* AWAITING STATE */}
       {groupStatus !== "active" && (
         <>
           <h2>Almost there, {nameOrganizer}!</h2>
@@ -225,31 +205,37 @@ export default function VerifyPending({
           </button>
 
           {resendOk && (
-            <span className="error-container" role="status" aria-live="polite">
-              <CheckCircle2 stroke="green" />
-              <small className="success-message">
-                Verification email sent. Please check your inbox.
-              </small>
+            <span className="info-resend" role="status" aria-live="polite">
+              <CheckCircle2 stroke="var(--color-green)" />
+              <small>Verification email sent. Please check your inbox.</small>
             </span>
           )}
 
           {error.resend && (
-            <span className="error-container" role="alert">
-              <CircleAlert /> <small>{error.resend}</small>
+            <span className="error-resend" role="alert">
+              <CircleAlert stroke="var(--color-red)" />{" "}
+              <small>{error.resend}</small>
             </span>
           )}
 
           {groupStatus === "error" && (
-            <div className="status-message">
+            <div className="error-resend" role="alert">
               <CircleAlert size={26} stroke="var(--color-red)" />
               <span style={{ color: "var(--color-red)" }}>
                 Could not verify this group.
               </span>
               <small>Please create a new group.</small>
+              <button onClick={() => window.Location.reload()}>
+                Create Group
+              </button>
             </div>
           )}
         </>
       )}
+
+      {/* ACTIVE STATE */}
+
+      {groupStatus === "active" && <ActiveGroup />}
     </div>
   );
 }

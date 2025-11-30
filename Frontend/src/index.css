@@ -20,10 +20,11 @@
   /* Main Colors */
   --color-red: #c0392b;
   --color-green: #27ae60;
-  --color-gold: #f1c40f;
+  --color-gold: #d4af37;
 
   /* Secundary Colors */
   --color-white: #ffffff;
+  --color-cream: #fff8f0;
   --color-light-gray: #f7f7f7;
   --color-dark-gray: #333333;
 
@@ -32,6 +33,7 @@
   --color-btn-primary-hover: #e74c3c;
   --color-btn-secondary: var(--color-green);
   --color-btn-secondary-hover: #2ecc71;
+  --color-btn-gold: linear-gradient(90deg, #f1c40f, #f39c12);
 
   /* Text */
   --color-text-primary: var(--color-dark-gray);

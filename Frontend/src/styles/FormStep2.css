@@ -1,0 +1,154 @@
+.step-2 .form-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.step-2 .icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxs);
+}
+
+.step-2 .icon-button:hover {
+  background-color: var(--color-light-gray);
+  transition: 0.3s;
+}
+
+.step-2 label {
+  font-size: var(--font-md);
+  font-weight: 500;
+  color: var(--color-gold);
+}
+
+.step-2 input[type="text"],
+.step-2 input[type="email"] {
+  width: 100%;
+  padding: var(--space-xs);
+  margin-top: var(--space-xxs);
+  font-size: var(--font-md);
+  border-radius: var(--space-xs);
+  border: 2px solid var(--color-green);
+  color: var(--color-text-primary);
+}
+
+.step-2 input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 4px var(--color-gold);
+}
+
+.step-2 .members-list {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--color-dark-gray);
+  border-radius: var(--space-sm);
+  padding: var(--space-xs);
+  margin: var(--space-xs) 0;
+  gap: var(--space-xs);
+  background-color: var(--color-white);
+}
+
+.step-2 .member-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-2 .remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xxs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.step-2 .remove-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.step-2 .input-remove-container {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.step-2 .errors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  margin-top: var(--space-xxs);
+}
+
+.step-2 .error-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xxs);
+  color: var(--color-red);
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.step-2 .add-member-btn {
+  width: fit-content;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-green);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--space-xs);
+  font-size: var(--font-sm);
+  cursor: pointer;
+  margin-top: var(--space-sm);
+}
+
+.step-2 .add-member-btn:hover {
+  background-color: #2ecc71;
+  transition: 0.3s;
+}
+
+.step-2 .submit-btn {
+  width: 100%;
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  background-color: var(--color-red);
+  color: var(--color-white);
+  font-size: var(--font-md);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--space-md);
+  cursor: pointer;
+}
+
+.step-2 .submit-btn:hover {
+  background-color: var(--color-btn-primary-hover);
+  transition: 0.3s;
+}
+
+@media (max-width: 400px) {
+  .container.step-2 {
+    padding: var(--space-sm);
+  }
+
+  .step-2 .form-header h2 {
+    font-size: var(--font-md);
+  }
+
+  .step-2 input[type="text"],
+  .step-2 input[type="email"] {
+    font-size: var(--font-sm);
+  }
+
+  .step-2 .submit-btn {
+    font-size: var(--font-sm);
+  }
+}

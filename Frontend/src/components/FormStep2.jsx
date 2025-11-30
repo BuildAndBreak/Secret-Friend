@@ -1,6 +1,7 @@
 import { ChevronLeft, CircleX, CircleAlert } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useState } from "react";
+import "../styles/FormStep2.css";
 
 export default function FormStep2({
   step,
@@ -20,42 +21,39 @@ export default function FormStep2({
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       const emails = list.map((m) => (m.email || "").trim().toLowerCase());
 
-      const allHaveEmail = emails.every((e) => e.length > 0);
-      if (!allHaveEmail) return "All members must have an email.";
-
-      const allValid = emails.every((e) => emailRegex.test(e));
-      if (!allValid) return "Some emails are invalid.";
-
-      const unique = new Set(emails);
-      if (unique.size !== emails.length) return "Member emails must be unique.";
-
+      if (!emails.every(Boolean)) return "All members must have an email.";
+      if (!emails.every((e) => emailRegex.test(e)))
+        return "Some emails are invalid.";
+      if (new Set(emails).size !== emails.length)
+        return "Member emails must be unique.";
       if (emails.includes(emailOrganizer.trim().toLowerCase()))
         return "Organizer email cannot be used for members.";
-
       return "";
     },
     [emailOrganizer]
   );
 
-  function AddMember() {
+  function addMember() {
     setSubmitted(false);
     setMembers((prev) => [...prev, { id: uuidv4(), name: "", email: "" }]);
   }
 
-  function RemoveMember(id) {
+  function removeMember(id) {
     setSubmitted(false);
     setMembers((prev) => prev.filter((m) => m.id !== id));
   }
 
   function onChangeMember(e, id) {
+    const v = e.target.value;
     setMembers((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, name: e.target.value } : m))
+      prev.map((m) => (m.id === id ? { ...m, name: v } : m))
     );
   }
 
   function onChangeEmail(e, id) {
+    const v = e.target.value;
     setMembers((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, email: e.target.value } : m))
+      prev.map((m) => (m.id === id ? { ...m, email: v } : m))
     );
   }
 
@@ -64,9 +62,9 @@ export default function FormStep2({
     setSubmitted(true);
 
     let ok = true;
-
     const memberNames = members.map((m) => m.name.trim()).filter(Boolean);
     const organizerCount = includeOrganizer && nameOrganizer.trim() ? 1 : 0;
+
     if (organizerCount + memberNames.length < 3) {
       setError((prev) => ({
         ...prev,
@@ -102,6 +100,7 @@ export default function FormStep2({
   useEffect(() => {
     const memberNames = members.map((m) => m.name.trim()).filter(Boolean);
     const uniqueNames = new Set(memberNames);
+
     if (
       memberNames.length !== uniqueNames.size ||
       (memberNames.includes(nameOrganizer.trim()) && includeOrganizer)
@@ -114,31 +113,21 @@ export default function FormStep2({
       setError((prev) => ({ ...prev, members: "" }));
     }
 
-    // nº membros
     const organizerCount = includeOrganizer && nameOrganizer.trim() ? 1 : 0;
     if (organizerCount + memberNames.length >= 3) {
       setError((prev) => ({ ...prev, numMembers: "" }));
     }
 
-    // emails — só mostra depois do primeiro submit
     if (submitted) {
       const emErr = emailError(members);
       setError((prev) => ({ ...prev, emails: emErr }));
-    } else {
-      // antes de submeter, não mostrar erro de emails
-      setError((prev) => ({ ...prev, emails: "" }));
     }
-  }, [
-    members,
-    nameOrganizer,
-    includeOrganizer,
-    submitted,
-    setError,
-    emailError,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [members, nameOrganizer, includeOrganizer, submitted]);
 
-  // inicializa nº de inputs
+  // initialize members only if empty (avoid wiping user input)
   useEffect(() => {
+    if (members && members.length > 0) return;
     const initialMembers = includeOrganizer ? 2 : 3;
     setMembers(
       Array.from({ length: initialMembers }, () => ({
@@ -147,25 +136,28 @@ export default function FormStep2({
         email: "",
       }))
     );
-  }, [includeOrganizer, setMembers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (step !== 2) return null;
 
+  const isSubmitDisabled =
+    !!error.members || !!error.numMembers || (submitted && !!error.emails);
+
   return (
-    <form className="container" onSubmit={Continue2} noValidate>
+    <form className="container step-2" onSubmit={Continue2} noValidate>
       <div className="form-header">
-        <span type="button">
-          <ChevronLeft
-            style={{ marginRight: ".2rem" }}
-            className="goBack"
-            size={40}
-            onClick={() => {
-              setStep(1);
-              setError({});
-              setSubmitted(false);
-            }}
-          />
-        </span>
+        <button
+          type="button"
+          aria-label="Back"
+          className="icon-button"
+          onClick={() => {
+            setStep(1);
+            setError({});
+            setSubmitted(false);
+          }}>
+          <ChevronLeft size={28} />
+        </button>
         <h2>Family members</h2>
       </div>
 
@@ -179,13 +171,26 @@ export default function FormStep2({
       {members.map((member, i) => {
         const MemberNum = nameOrganizer && includeOrganizer ? i + 2 : i + 1;
         const inputId = `member-name${i}`;
+        const minMembers = 2; // min besides organizer
+        const canRemove = members.length > minMembers;
+
         return (
           <div className="members-list" key={member.id}>
             <div className="member-list-header">
               <label htmlFor={inputId}>Member {MemberNum}</label>
-              <span type="button" onClick={() => RemoveMember(member.id)}>
-                <CircleX color="#c0392b" />
-              </span>
+              <button
+                type="button"
+                className="remove-btn"
+                onClick={() => removeMember(member.id)}
+                disabled={!canRemove}
+                aria-label={`Remove member ${MemberNum}`}
+                title={
+                  !canRemove
+                    ? "Cannot remove below minimum members"
+                    : "Remove member"
+                }>
+                <CircleX color="var(--color-red)" />
+              </button>
             </div>
 
             <div className="input-remove-container">
@@ -195,6 +200,7 @@ export default function FormStep2({
                 value={member.name}
                 onChange={(e) => onChangeMember(e, member.id)}
                 required
+                aria-invalid={!!error.members}
               />
             </div>
 
@@ -205,38 +211,38 @@ export default function FormStep2({
               value={member.email}
               onChange={(e) => onChangeEmail(e, member.id)}
               required
+              aria-invalid={!!error.emails}
+              aria-describedby={error.emails ? "emails-error" : undefined}
             />
           </div>
         );
       })}
 
-      {error.members && (
-        <span className="error-container">
-          <CircleAlert /> <small>{error.members}</small>
-        </span>
-      )}
+      <div aria-live="polite" className="errors">
+        {error.members && (
+          <span className="error-container" id="members-error">
+            <CircleAlert /> <small>{error.members}</small>
+          </span>
+        )}
 
-      {error.numMembers && (
-        <span className="error-container">
-          <CircleAlert /> <small>{error.numMembers}</small>
-        </span>
-      )}
+        {error.numMembers && (
+          <span className="error-container" id="num-error">
+            <CircleAlert /> <small>{error.numMembers}</small>
+          </span>
+        )}
 
-      {error.emails && (
-        <span className="error-container">
-          <CircleAlert /> <small>{error.emails}</small>
-        </span>
-      )}
+        {error.emails && (
+          <span className="error-container" id="emails-error">
+            <CircleAlert /> <small>{error.emails}</small>
+          </span>
+        )}
+      </div>
 
-      <button type="button" onClick={AddMember}>
+      <button type="button" className="add-member-btn" onClick={addMember}>
         Add member
       </button>
 
-      <button
-        type="submit"
-        disabled={
-          !!error.members || !!error.numMembers || (submitted && !!error.emails)
-        }>
+      <button type="submit" disabled={isSubmitDisabled} className="submit-btn">
         Continue...
       </button>
     </form>

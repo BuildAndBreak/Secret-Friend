@@ -20,18 +20,18 @@
   transition: 400ms;
 }
 
-.verify-pending .sucess-container {
+.verify-pending .info-resend {
   display: flex;
   align-items: center;
+  color: var(--color-green);
   gap: var(--space-sm);
   margin: var(--space-md) 0;
 }
-
-.verify-pending .active-message {
-  color: var(--color-green);
-}
-
-.verify-pending .info-spam {
+.verify-pending .error-resend {
+  display: flex;
+  align-items: center;
+  color: var(--color-red);
+  gap: var(--space-sm);
   margin: var(--space-md) 0;
 }
 

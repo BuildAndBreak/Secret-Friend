@@ -45,7 +45,7 @@ export default function Form() {
     <>
       {/* FORM PART 1*/}
       {step === 1 && (
-        <form className="container">
+        <div className="container step-1 ">
           <h2>Organizer</h2>
 
           <label htmlFor="name">What's your name?</label>
@@ -66,7 +66,7 @@ export default function Form() {
             </span>
           )}
 
-          <label>
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={includeOrganizer}
@@ -96,7 +96,7 @@ export default function Form() {
           <button type="submit" onClick={(e) => Continue(e)}>
             Continue...
           </button>
-        </form>
+        </div>
       )}
 
       {/* FORM PART 2*/}
