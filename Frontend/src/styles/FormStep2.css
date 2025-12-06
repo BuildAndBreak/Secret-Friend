@@ -27,6 +27,13 @@
   color: var(--color-gold);
 }
 
+.step-2 .members-scroll {
+  max-height: 300px;
+  overflow-y: scroll;
+  padding-right: var(--space-xxs);
+  background-color: var(--color-cream);
+}
+
 .step-2 input[type="text"],
 .step-2 input[type="email"] {
   width: 100%;

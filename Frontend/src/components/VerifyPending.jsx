@@ -8,6 +8,7 @@ import ActiveGroup from "./ActiveGroup";
 export default function VerifyPending({
   step,
   nameOrganizer,
+  includeOrganizer,
   email,
   error,
   setError,
@@ -235,7 +236,12 @@ export default function VerifyPending({
 
       {/* ACTIVE STATE */}
 
-      {groupStatus === "active" && <ActiveGroup />}
+      {groupStatus === "active" && (
+        <ActiveGroup
+          includeOrganizer={includeOrganizer}
+          groupCode={groupCode}
+        />
+      )}
     </div>
   );
 }

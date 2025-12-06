@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 
 let transporter = null;
 
-// Só cria o transporter se o SMTP estiver configurado
 if (process.env.SMTP_HOST) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,

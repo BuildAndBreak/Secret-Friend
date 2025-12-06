@@ -1,0 +1,283 @@
+/* HEADER */
+.invite-container .invite-header {
+  text-align: center;
+}
+
+.invite-container .invite-header h1 {
+  font-size: var(--font-lg);
+  color: var(--color-red);
+  font-weight: 700;
+}
+
+/* CARD */
+.invite-container .card {
+  background: var(--color-light-gray);
+  border-radius: var(--space-sm);
+  padding: var(--space-md);
+  box-shadow: 0 2px 8px #0002;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.invite-container .card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-green);
+  font-size: var(--font-md);
+}
+
+/* MEMBERS */
+.invite-container .members-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  list-style: none;
+  padding-left: 0;
+}
+
+.invite-container .members-list li {
+  padding: var(--space-xxs) 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* POLL */
+.invite-container .poll-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: var(--space-xs);
+}
+
+.invite-container .poll-btn {
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-white);
+  border: 2px solid var(--color-green);
+  border-radius: var(--space-xs);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.invite-container .poll-btn:hover {
+  background-color: var(--color-green);
+  color: var(--color-white);
+}
+
+.invite-container .poll-btn.selected {
+  background: var(--color-green);
+  color: var(--color-white);
+}
+
+.invite-container input {
+  width: 5rem;
+  border: 2px solid var(--color-green);
+  border-radius: var(--space-xs);
+}
+
+.invite-container .poll-btn-confirm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.invite-container .poll-btn-confirm {
+  margin-top: var(--space-md);
+  padding: var(--space-xxs);
+  border-radius: var(--space-md);
+  border: none;
+  background-color: var(--color-red);
+  color: var(--color-white);
+  font-size: var(--font-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.invite-container .poll-btn-confirm:hover {
+  background-color: var(--color-btn-primary-hover);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.invite-container .waiting-text {
+  color: var(--color-red);
+  font-weight: 500;
+}
+
+.invite-container .final-price {
+  color: var(--color-green);
+  font-weight: 600;
+}
+
+.invite-container .vote-feedback {
+  background: var(--color-light-gray);
+  border-radius: 12px;
+  margin-top: var(--space-md);
+  animation: fadeIn 0.4s ease;
+}
+
+.invite-container .feedback-success {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-green);
+  margin-bottom: var(--space-xs);
+}
+
+.invite-container .feedback-waiting {
+  font-size: var(--font-sm);
+  color: var(--color-dark-gray);
+  font-style: italic;
+  margin-bottom: var(--space-xs);
+}
+
+.invite-container .feedback-info {
+  font-size: var(--font-xs);
+  color: var(--color-gray);
+  margin-top: var(--space-xxs);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* WISHLIST */
+.invite-container .wishlist {
+  padding: 1rem;
+}
+
+.invite-container .wishlist li {
+  background: var(--color-white);
+  border: 1px solid #ddd;
+  padding: var(--space-xs);
+  border-radius: var(--space-xs);
+  margin-bottom: var(--space-xxs);
+}
+
+.invite-container .wishlist-input {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.invite-container .wishlist-input input {
+  flex: 1;
+  padding: var(--space-xs);
+  border: 2px solid var(--color-green);
+  border-radius: var(--space-xs);
+}
+
+.invite-container .gift-info {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-dark-gray);
+  font-weight: 300;
+}
+
+/* CHAT */
+.invite-container .chat-box {
+  height: 180px;
+  overflow-y: auto;
+  background: #fefefe;
+  border: 1px solid #ddd;
+  border-radius: var(--space-xs);
+  padding: var(--space-xs);
+}
+
+.invite-container .chat-msg {
+  padding: var(--space-xxs) 0;
+}
+
+.invite-container .chat-input {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.invite-container .chat-input input {
+  flex: 1;
+  border: 2px solid var(--color-green);
+  border-radius: var(--space-xs);
+  padding: var(--space-xs);
+}
+
+/* BUTTONS */
+.invite-container .btn {
+  cursor: pointer;
+  border-radius: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.invite-container .btn-primary {
+  background: var(--color-red);
+  color: white;
+  border: none;
+}
+
+.invite-container .btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.invite-container .btn-gold {
+  background: var(--color-gold);
+  display: flex;
+  align-items: center;
+  border: none;
+}
+
+.invite-container .btn-green {
+  background: var(--color-green);
+  color: white;
+  border: none;
+}
+
+.invite-container .btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* REVEAL */
+.invite-container .reveal-card {
+  text-align: center;
+}
+
+.invite-container .btn-reveal-container {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xxs);
+}
+
+.invite-container .reveal-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-sm);
+  font-size: var(--font-lg);
+  color: var(--color-green);
+}
+
+.invite-container .reveal-btn-cnt {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xxs);
+}
+
+/* UTILITIES */
+.invite-container .loader-center {
+  display: flex;
+  justify-content: center;
+  padding-top: 3rem;
+}
+
+.invite-container .none {
+  opacity: 0.6;
+}
+
+.invite-container .error-text {
+  color: var(--color-red);
+  text-align: center;
+  margin-top: 2rem;
+}

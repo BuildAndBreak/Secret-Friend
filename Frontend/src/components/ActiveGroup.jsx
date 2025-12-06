@@ -1,13 +1,18 @@
-import { useState } from "react";
-import { CheckCircle2, Copy, Share2, MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Copy, Share2 } from "lucide-react";
 import "../styles/ActiveGroup.css";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { API } from "../api/draws";
 
-export default function ActiveGroup({
-  groupCode,
-  organizerInviteToken, // (optional) only if organizer is a participant
-  onOpenPersonalPage, // optional callback instead of window.location
-}) {
+export default function ActiveGroup({ includeOrganizer, groupCode }) {
+  const [organizerInviteToken, setOrganizerInviteToken] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API}/api/groups/${groupCode}/organizer-invite-token`)
+      .then((res) => res.json())
+      .then((data) => setOrganizerInviteToken(data.organizerInviteToken));
+  }, [groupCode]);
+
   const [copied, setCopied] = useState(false);
 
   const shareMessage = `Our Secret Santa group has been created. Everyone will receive their personal link via email shortly. 
@@ -32,9 +37,9 @@ It's mandatory that everyone votes on the gift pool price so all members can dis
   }
 
   function handleGoToPersonal() {
+    if (!organizerInviteToken) return;
     const url = `${window.location.origin}/i/${organizerInviteToken}`;
-    if (onOpenPersonalPage) onOpenPersonalPage(url);
-    else window.location.href = url;
+    return (window.location.href = url);
   }
 
   return (
@@ -54,7 +59,8 @@ It's mandatory that everyone votes on the gift pool price so all members can dis
         </div>
         <p className="subtitle">
           Your group has been verified! <br />
-          All members will receive their personal links shortly.
+          All members will receive their personal links shortly.{" "}
+          {includeOrganizer && "(Including you!)"}
         </p>
       </div>
 
@@ -94,33 +100,13 @@ It's mandatory that everyone votes on the gift pool price so all members can dis
         </div>
 
         <div className="actions-row">
-          {organizerInviteToken ? (
-            <button
-              className="btn btn-primary"
-              onClick={handleGoToPersonal}
-              aria-label="Go to organizer personal page">
-              Go to my page →
-            </button>
-          ) : (
-            <button
-              className="btn btn-ghost"
-              onClick={() =>
-                (window.location.href = `/verified?code=${encodeURIComponent(
-                  groupCode
-                )}`)
-              }>
-              View group details
-            </button>
-          )}
-
-          <a
-            className="btn btn-link"
-            href={`mailto:?subject=${encodeURIComponent(
-              "Secret Santa — vote!"
-            )}&body=${encodeURIComponent(shareMessage)}`}
-            aria-label="Email share">
-            <MessageSquare size={16} /> Email
-          </a>
+          <button
+            className="btn btn-primary"
+            onClick={handleGoToPersonal}
+            aria-label="Go to organizer personal page"
+            disabled={!organizerInviteToken}>
+            Go to my page →
+          </button>
         </div>
       </div>
 

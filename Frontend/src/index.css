@@ -27,6 +27,7 @@
   --color-cream: #fff8f0;
   --color-light-gray: #f7f7f7;
   --color-dark-gray: #333333;
+  --color-gray: #777;
 
   /* Buttons / hover */
   --color-btn-primary: var(--color-red);

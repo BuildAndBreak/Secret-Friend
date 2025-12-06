@@ -1,4 +1,3 @@
-// Import React hooks and icons/styles you use in this step.
 import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronDown, X } from "lucide-react";
 import "../styles/FormStep3.css";
@@ -17,31 +16,23 @@ export default function FormStep3({
 }) {
   const [dropdownMemberId, setDropdownMemberId] = useState(null);
   const [loading, setLoading] = useState(false);
-  /**
-    EXCLUSIONS (directional):
-   'exclusions[giverId]' is a Set of receiverIds the giver CANNOT give to.
-    Example: exclusions["A"] = Set(["B"]) → A cannot give to B.
-   */
-  const [exclusions, setExclusions] = useState({});
-
+  const [exclusions, setExclusions] = useState({}); // directional
+  const [open, setOpen] = useState(false); // open exclusions
   const ORGANIZER = "organizer";
   const organizerName = (nameOrganizer || "").trim();
 
-  // Build the participants list of ids, in a stable order.
   const participants = useMemo(() => {
     // memoize so we don't rebuild on every render unless deps change
     const ids = [];
-    if (includeOrganizer && organizerName) ids.push(ORGANIZER); // put organizer first if included and has a name
-    for (const m of members) ids.push(m.id); // then push every member id
-    return ids; // result like ["organizer", "a1", "a2", ...] or without organizer
-  }, [includeOrganizer, organizerName, members]); // recompute when any of these change
+    if (includeOrganizer && organizerName) ids.push(ORGANIZER);
+    for (const m of members) ids.push(m.id);
+    return ids;
+  }, [includeOrganizer, organizerName, members]);
 
-  // Toggle which member's dropdown is open (click to open/close).
   function toggleDropdown(id) {
-    setDropdownMemberId((prev) => (prev === id ? null : id)); // close if already open, otherwise open the clicked one
+    setDropdownMemberId((prev) => (prev === id ? null : id));
   }
 
-  // Clone the exclusions object (plain object) and each inner Set to keep immutability.
   const cloneExclusions = (src) => {
     const out = {};
     for (const k in src) out[k] = new Set(src[k]); // copy each giver's Set so we don't mutate existing state
@@ -136,7 +127,7 @@ export default function FormStep3({
     setExclusions(next); // commit state
   }
 
-  // ---------- SUBMISSION ----------
+  // Submission
   async function submitData(e) {
     e?.preventDefault();
     setLoading(true);
@@ -172,7 +163,7 @@ export default function FormStep3({
 
       setStep(4); // 4) advance to the verification screen
     } catch (err) {
-      console.error(err); // log dev info
+      console.error(err);
       setError((prev) => ({
         // show user-friendly message
         ...prev,
@@ -186,128 +177,143 @@ export default function FormStep3({
   return (
     <form className="container step-3" onSubmit={submitData}>
       <div className="form-header">
-        <button type="button" aria-label="Back" className="icon-button">
-          <ChevronLeft
-            className="goBack"
-            size={28}
-            onClick={() => {
-              setStep(2);
-              setError?.({}); // clear errors if parent passed setError
-            }}
-          />
+        <button
+          type="button"
+          aria-label="Back"
+          className="icon-button"
+          onClick={() => {
+            setStep(2);
+            setError?.({}); // clear errors if parent passed setError
+          }}>
+          <ChevronLeft size={28} />
         </button>
         <h2>Exclusions</h2>
       </div>
+
       <div>
         <p>Do you want to set exclusions?</p>
         <aside>
-          An exclusion is <strong>directional</strong>: the selected giver
-          cannot give to that specific receiver.
+          An exclusion means the selected giver <strong>cannot</strong> give a
+          gift to that specific receiver.
         </aside>
 
-        {/* Organizer as a potential GIVER (if included) */}
-        {includeOrganizer && organizerName && (
-          <>
-            <div
-              className={`${
-                dropdownMemberId === ORGANIZER ? "open" : ""
-              } list-members-container`}>
-              <span type="button">{organizerName}</span>
-              {dropdownMemberId !== ORGANIZER ? (
-                <ChevronDown onClick={() => toggleDropdown(ORGANIZER)} /> // open organizer’s exclusion list
-              ) : (
-                <X onClick={() => toggleDropdown(null)} /> // close it
-              )}
-            </div>
+        <button
+          type="button"
+          className="btn-exclusions"
+          onClick={() => setOpen(!open)}>
+          {!open ? "Set exclusions" : "Close list"}
+        </button>
+      </div>
 
-            {dropdownMemberId === ORGANIZER && (
-              <div className="exclusions-dropdown">
-                {members.map((m) => {
-                  // every member is a possible receiver
-                  const checked = isExcluded(ORGANIZER, m.id); // is organizer→member currently excluded?
-                  const disabled = !checked && wouldBreakIfAdd(ORGANIZER, m.id); // prevent impossible configuration
-                  return (
-                    <label key={m.id}>
-                      <input
-                        type="checkbox"
-                        checked={checked} // reflect state
-                        disabled={disabled} // disallow toggling to impossible state
-                        onChange={() => toggleExclusion(m.id, ORGANIZER)} // toggle organizer -> member
-                      />
-                      {m.name}
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Each member as a GIVER */}
-        {members.map((member) => {
-          const open = dropdownMemberId === member.id; // is this member’s dropdown open?
-          return (
-            <div key={member.id}>
-              <div className={`${open ? "open" : ""} list-members-container`}>
-                <span type="button">{member.name}</span>
-                {!open ? (
-                  <ChevronDown onClick={() => toggleDropdown(member.id)} /> // open their exclusion list
+      {/* Organizer as a potential GIVER (if included) */}
+      {open && (
+        <div className="scrollbar exclusions-scroll">
+          {includeOrganizer && organizerName && (
+            <>
+              <div
+                className={`${
+                  dropdownMemberId === ORGANIZER ? "open" : ""
+                } list-members-container`}>
+                <span type="button">{organizerName}</span>
+                {dropdownMemberId !== ORGANIZER ? (
+                  <ChevronDown onClick={() => toggleDropdown(ORGANIZER)} />
                 ) : (
-                  <X onClick={() => toggleDropdown(null)} /> // close it
+                  <X onClick={() => toggleDropdown(null)} />
                 )}
               </div>
 
-              {open && (
+              {dropdownMemberId === ORGANIZER && (
                 <div className="exclusions-dropdown">
-                  {/* Option to exclude giving to organizer (if organizer exists) */}
-                  {includeOrganizer && organizerName && (
-                    <label>
-                      {(() => {
-                        const checked = isExcluded(member.id, ORGANIZER); // member -> organizer excluded?
+                  {members.map((m) => {
+                    // every member is a possible receiver
+                    const checked = isExcluded(ORGANIZER, m.id); // is organizer→member currently excluded?
+                    const disabled =
+                      !checked && wouldBreakIfAdd(ORGANIZER, m.id); // prevent impossible configuration
+                    return (
+                      <label key={m.id}>
+                        <input
+                          type="checkbox"
+                          checked={checked} // reflect state
+                          disabled={disabled} // disallow toggling to impossible state
+                          onChange={() => toggleExclusion(m.id, ORGANIZER)} // toggle organizer -> member
+                        />
+                        {m.name}
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Each member as a GIVER */}
+          {members.map((member) => {
+            const open = dropdownMemberId === member.id; // is this member’s dropdown open?
+            return (
+              <div key={member.id}>
+                <div className={`${open ? "open" : ""} list-members-container`}>
+                  <span type="button">{member.name}</span>
+                  {!open ? (
+                    <ChevronDown onClick={() => toggleDropdown(member.id)} /> // open their exclusion list
+                  ) : (
+                    <X onClick={() => toggleDropdown(null)} /> // close it
+                  )}
+                </div>
+
+                {open && (
+                  <div className="exclusions-dropdown">
+                    {/* Option to exclude giving to organizer (if organizer exists) */}
+                    {includeOrganizer && organizerName && (
+                      <label>
+                        {(() => {
+                          const checked = isExcluded(member.id, ORGANIZER); // member -> organizer excluded?
+                          const disabled =
+                            !checked && wouldBreakIfAdd(member.id, ORGANIZER); // would break matching?
+                          return (
+                            <>
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                disabled={disabled}
+                                onChange={() =>
+                                  toggleExclusion(ORGANIZER, member.id)
+                                } // toggle member -> organizer
+                              />
+                              {organizerName}
+                            </>
+                          );
+                        })()}
+                      </label>
+                    )}
+
+                    {/* Other members as potential receivers (exclude self) */}
+                    {members
+                      .filter((mem) => mem.id !== member.id) // no self-exclusion UI (self-gift is always disallowed)
+                      .map((mem) => {
+                        const checked = isExcluded(member.id, mem.id); // member -> other-member excluded?
                         const disabled =
-                          !checked && wouldBreakIfAdd(member.id, ORGANIZER); // would break matching?
+                          !checked && wouldBreakIfAdd(member.id, mem.id); // would adding this break?
                         return (
-                          <>
+                          <label key={mem.id}>
                             <input
                               type="checkbox"
                               checked={checked}
                               disabled={disabled}
                               onChange={() =>
-                                toggleExclusion(ORGANIZER, member.id)
-                              } // toggle member -> organizer
+                                toggleExclusion(mem.id, member.id)
+                              }
                             />
-                            {organizerName}
-                          </>
+                            {mem.name}
+                          </label>
                         );
-                      })()}
-                    </label>
-                  )}
-
-                  {/* Other members as potential receivers (exclude self) */}
-                  {members
-                    .filter((mem) => mem.id !== member.id) // no self-exclusion UI (self-gift is always disallowed)
-                    .map((mem) => {
-                      const checked = isExcluded(member.id, mem.id); // member -> other-member excluded?
-                      const disabled =
-                        !checked && wouldBreakIfAdd(member.id, mem.id); // would adding this break?
-                      return (
-                        <label key={mem.id}>
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            disabled={disabled}
-                            onChange={() => toggleExclusion(mem.id, member.id)} // toggle member -> other-member
-                          />
-                          {mem.name}
-                        </label>
-                      );
-                    })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                      })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <button className="submit-btn" type="submit">
         Create Secret Santa{" "}

@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 import Draw from "../models/Draw.js";
+import { nicknames } from "../utils/nicknames.js";
 
 const router = express.Router();
 const nano = customAlphabet(
@@ -88,6 +89,11 @@ function drawWithExclusions(ids, bans) {
   return dfs(0) ? match : null;
 }
 
+function uniqueNicknames(members, nicknameList) {
+  const shuffled = shuffle(nicknameList.slice());
+  return members.map((m, idx) => ({ ...m, nickname: shuffled[idx] }));
+}
+
 // Health (router)
 router.get("/health", (_req, res) => res.json({ ok: true }));
 
@@ -104,14 +110,18 @@ router.post("/", async (req, res) => {
     ) {
       return res.status(400).json({ message: "Invalid payload" });
     }
-    const organizerName = organizer.trim();
+    const organizerName = organizer.trim().toLowerCase();
     const organizerEmail = email.trim().toLowerCase();
 
     const cleanMembers = members
       .map((m) => ({
         id: String(m?.id || "").trim(),
-        name: String(m?.name || "").trim(),
-        email: String(m?.email || "").trim(),
+        name: String(m?.name || "")
+          .trim()
+          .toLowerCase(),
+        email: String(m?.email || "")
+          .trim()
+          .toLowerCase(),
       }))
       .filter((m) => m.id && m.name && m.email);
 
@@ -176,12 +186,14 @@ router.post("/", async (req, res) => {
     }
 
     // Prepare members with tokens
-    const membersToSave = participants.map((m) => ({
+    const membersWn = participants.map((m) => ({
       id: m.id,
       name: m.name,
       email: m.email.trim().toLowerCase(),
       inviteToken: nano(32),
     }));
+
+    const membersToSave = uniqueNicknames(membersWn, nicknames);
 
     // Set verification state
     const draw = await Draw.create({
@@ -192,8 +204,6 @@ router.post("/", async (req, res) => {
       members: membersToSave,
       exclusions: Array.isArray(exclusions) ? exclusions : [],
       pairs,
-      giftPoll: { options: [10, 15, 20, 25, 30], votes: [] },
-      wishes: [],
       status: "awaiting_organizer_verify", // locked until organizer verifies
       organizerVerifyToken: nano(32),
     });

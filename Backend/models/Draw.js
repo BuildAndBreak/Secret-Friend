@@ -1,16 +1,5 @@
 import mongoose from "mongoose";
 
-const MemberSchema = new mongoose.Schema(
-  {
-    id: { type: String, required: true, trim: true },
-    name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, trim: true, lowercase: true },
-    inviteToken: { type: String, index: true },
-    inviteSentAt: Date,
-  },
-  { _id: false }
-);
-
 const PairIdSchema = new mongoose.Schema(
   {
     fromId: { type: String, required: true, trim: true },
@@ -27,12 +16,10 @@ const ExclusionSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// Optional embedded wishlist: per member (ownerId)
 const WishItemSchema = new mongoose.Schema(
   {
     id: { type: String, required: true, trim: true },
     text: { type: String, required: true, trim: true },
-    createdAt: { type: Date, default: Date.now },
   },
   { _id: false }
 );
@@ -55,9 +42,28 @@ const PollVoteSchema = new mongoose.Schema(
 
 const GiftPollSchema = new mongoose.Schema(
   {
-    options: { type: [Number], default: [10, 15, 20, 25, 30] },
+    options: {
+      type: [Number],
+      default: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+    },
     votes: { type: [PollVoteSchema], default: [] },
-    lockedAt: { type: Date },
+    finalPrice: { type: Number, default: null },
+  },
+  { _id: false }
+);
+
+const MemberSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true, trim: true },
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, lowercase: true },
+    nickname: { type: String, required: true },
+    inviteToken: { type: String, index: true },
+
+    wishlist: {
+      type: [WishItemSchema],
+      default: [],
+    },
   },
   { _id: false }
 );
@@ -77,19 +83,19 @@ const DrawSchema = new mongoose.Schema(
     members: { type: [MemberSchema], default: [] },
     pairs: { type: [PairIdSchema], default: [] }, // { fromId, toId }
     exclusions: { type: [ExclusionSchema], default: [] },
-    wishes: { type: [WishlistSchema], default: [] }, // [{ ownerId, items[] }]
     giftPoll: { type: GiftPollSchema, default: () => ({}) }, // poll options + votes
     organizerVerifyToken: { type: String, index: true },
     organizerVerifiedAt: Date,
     status: {
       type: String,
-      enum: ["draft", "awaiting_organizer_verify", "active"],
-      default: "draft",
+      enum: ["awaiting_organizer_verify", "active"],
+      default: "awaiting_organizer_verify",
     },
     messages: [
       {
         memberId: String,
         text: String,
+        nickname: String,
         createdAt: { type: Date, default: Date.now }, // group chat (MVP)
       },
     ],

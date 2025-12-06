@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import drawsRouter from "./routes/draw.js";
 import groupsRouter from "./routes/group.js";
 import inviteRouter from "./routes/invite.js";
+import chatRouter from "./routes/messages.js";
 
 // Create app instance
 const app = express();
@@ -32,6 +33,7 @@ app.get("/health", (_req, res) => {
 app.use("/api/draws", drawsRouter);
 app.use("/api/groups", groupsRouter);
 app.use("/api/invites", inviteRouter);
+app.use("/api/messages", chatRouter);
 
 // Env vars
 const PORT = process.env.PORT || 5000;

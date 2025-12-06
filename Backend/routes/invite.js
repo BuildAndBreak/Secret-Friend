@@ -1,12 +1,10 @@
 import express from "express";
 import Draw from "../models/Draw.js";
-import { nanoid } from "nanoid";
 
 const router = express.Router();
 
 function namesById(draw) {
   const map = Object.fromEntries(draw.members.map((m) => [m.id, m.name]));
-  console.log("Names by ID map:", map);
   return map;
 }
 
@@ -14,6 +12,7 @@ async function findByToken(token) {
   return Draw.findOne({ "members.inviteToken": token });
 }
 
+// Individual member page
 router.get("/:token", async (req, res) => {
   const { token } = req.params;
   const draw = await findByToken(token);
@@ -32,71 +31,31 @@ router.get("/:token", async (req, res) => {
   const toId = pair?.toId || null;
   const toName = toId ? map[toId] : null;
 
-  // wishlist bucket for this owner
-  const bucket = (draw.wishes || []).find((w) => w.ownerId === member.id);
-  const items = bucket?.items || [];
-
   // member's poll vote
   const votes = draw.giftPoll?.votes;
   const memberVote = votes?.find((v) => v.memberId === member.id) || null;
   const allVoted = draw.members.every((m) =>
     votes?.some((v) => v.memberId === m.id)
   );
+  const finalPrice = draw.giftPoll.finalPrice || null;
 
   const canReveal = allVoted;
 
   res.json({
     groupCode: draw.groupCode,
-    memberId: member.id,
-    name: member.name,
-    toId,
-    toName,
-    wishlist: items,
+    participants: draw.members.map((m) => ({ name: m.name })),
+    member,
     poll: {
       options: draw.giftPoll?.options || [],
       selected: memberVote ? memberVote.option : null,
+      memberVote,
       allVoted,
+      finalPrice,
     },
     toId: canReveal && toId ? toId : null,
     toName: canReveal && toName ? toName : null,
     messages: draw.messages?.slice(-50) || [], // last 50 msgs
   });
-});
-
-router.post("/:token/wishlist", async (req, res) => {
-  const { token } = req.params;
-  const { text } = req.body ?? {};
-  const t = String(text || "").trim();
-  if (!t) return res.status(400).json({ message: "text required" });
-
-  const draw = await findByToken(token);
-  if (!draw) return res.status(404).json({ message: "Invite not found" });
-  const member = draw.members.find((m) => m.inviteToken === token);
-
-  let wl = (draw.wishes || []).find((w) => w.ownerId === member.id);
-  if (!wl) {
-    wl = { ownerId: member.id, items: [] };
-    draw.wishes.push(wl);
-  }
-  wl.items.push({ id: nanoid(10), text: t, createdAt: new Date() });
-  await draw.save();
-
-  res.status(201).json({ ownerId: member.id, items: wl.items });
-});
-
-router.post("/:token/message", async (req, res) => {
-  const { token } = req.params;
-  const { text } = req.body ?? {};
-  const t = String(text || "").trim();
-  if (!t) return res.status(400).json({ message: "text required" });
-
-  const draw = await findByToken(token);
-  if (!draw) return res.status(404).json({ message: "Invite not found" });
-  const member = draw.members.find((m) => m.inviteToken === token);
-
-  draw.messages.push({ memberId: member.id, text: t, createdAt: new Date() });
-  await draw.save();
-  res.status(201).json({ ok: true });
 });
 
 export default router;

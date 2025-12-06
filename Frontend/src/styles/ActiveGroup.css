@@ -60,12 +60,23 @@
 
 .active-group .btn-primary {
   background: var(--color-red);
+  display: flex;
+  justify-content: center;
   color: var(--color-white);
   box-shadow: 0 6px 16px rgba(192, 57, 43, 0.12);
 }
 
+.btn-primary:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
+  box-shadow: none;
+}
+
 .active-group .btn-gold {
-  background: linear-gradient(90deg, #f1c40f, #f39c12);
+  background: var(--color-btn-gold);
   color: var(--color-dark-gray);
 }
 

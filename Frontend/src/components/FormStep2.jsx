@@ -167,56 +167,57 @@ export default function FormStep2({
           <input id="organizer" type="text" value={nameOrganizer} disabled />
         </>
       )}
+      <div className="scrollbar members-scroll">
+        {members.map((member, i) => {
+          const MemberNum = nameOrganizer && includeOrganizer ? i + 2 : i + 1;
+          const inputId = `member-name${i}`;
+          const minMembers = 2; // min besides organizer
+          const canRemove = members.length > minMembers;
 
-      {members.map((member, i) => {
-        const MemberNum = nameOrganizer && includeOrganizer ? i + 2 : i + 1;
-        const inputId = `member-name${i}`;
-        const minMembers = 2; // min besides organizer
-        const canRemove = members.length > minMembers;
+          return (
+            <div className="members-list" key={member.id}>
+              <div className="member-list-header">
+                <label htmlFor={inputId}>Member {MemberNum}</label>
+                <button
+                  type="button"
+                  className="remove-btn"
+                  onClick={() => removeMember(member.id)}
+                  disabled={!canRemove}
+                  aria-label={`Remove member ${MemberNum}`}
+                  title={
+                    !canRemove
+                      ? "Cannot remove below minimum members"
+                      : "Remove member"
+                  }>
+                  <CircleX color="var(--color-red)" />
+                </button>
+              </div>
 
-        return (
-          <div className="members-list" key={member.id}>
-            <div className="member-list-header">
-              <label htmlFor={inputId}>Member {MemberNum}</label>
-              <button
-                type="button"
-                className="remove-btn"
-                onClick={() => removeMember(member.id)}
-                disabled={!canRemove}
-                aria-label={`Remove member ${MemberNum}`}
-                title={
-                  !canRemove
-                    ? "Cannot remove below minimum members"
-                    : "Remove member"
-                }>
-                <CircleX color="var(--color-red)" />
-              </button>
-            </div>
+              <div className="input-remove-container">
+                <input
+                  id={inputId}
+                  type="text"
+                  value={member.name}
+                  onChange={(e) => onChangeMember(e, member.id)}
+                  required
+                  aria-invalid={!!error.members}
+                />
+              </div>
 
-            <div className="input-remove-container">
+              <label htmlFor={`member-email${i}`}>Email</label>
               <input
-                id={inputId}
-                type="text"
-                value={member.name}
-                onChange={(e) => onChangeMember(e, member.id)}
+                id={`member-email${i}`}
+                type="email"
+                value={member.email}
+                onChange={(e) => onChangeEmail(e, member.id)}
                 required
-                aria-invalid={!!error.members}
+                aria-invalid={!!error.emails}
+                aria-describedby={error.emails ? "emails-error" : undefined}
               />
             </div>
-
-            <label htmlFor={`member-email${i}`}>Email</label>
-            <input
-              id={`member-email${i}`}
-              type="email"
-              value={member.email}
-              onChange={(e) => onChangeEmail(e, member.id)}
-              required
-              aria-invalid={!!error.emails}
-              aria-describedby={error.emails ? "emails-error" : undefined}
-            />
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
       <div aria-live="polite" className="errors">
         {error.members && (

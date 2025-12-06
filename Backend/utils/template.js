@@ -1,3 +1,5 @@
+import { capitalizeFirstLetter } from "./capitalize.js";
+
 const year = new Date().getFullYear();
 
 export function verifyEmail({ draw, verifyUrl }) {
@@ -8,7 +10,7 @@ export function verifyEmail({ draw, verifyUrl }) {
     <h2 style="text-align:center;color:#c0392b;">Welcome to Secret Santa! 🎅</h2>
 
     <p style="font-size:16px;color:#333;margin-top:20px;">
-      Hi <strong>${draw.organizer}</strong>,
+      Hi <strong>${capitalizeFirstLetter(draw.organizer)}</strong>,
     </p>
 
     <p style="font-size:16px;color:#333;">
@@ -47,7 +49,7 @@ export function organizerEmail({ draw, url }) {
         <h2 style="text-align:center;color:#27ae60;">Welcome to Secret Santa! 🎁</h2>
     
         <p style="color:#333;font-size:16px;margin-top:20px;">
-          Hello <strong>${draw.organizer}</strong>,
+          Hello <strong>${capitalizeFirstLetter(draw.organizer)}</strong>,
         </p>
     
         <p style="color:#333;font-size:16px;">
@@ -92,11 +94,13 @@ export function membersEmail({ m, draw, url }) {
         <h2 style="text-align:center;color:#27ae60;">You've been invited to Secret Santa! 🎁</h2>
     
         <p style="color:#333;font-size:16px;margin-top:20px;">
-          Hello <strong>${m.name}</strong>,
+          Hello <strong>${capitalizeFirstLetter(m.name)}</strong>,
         </p>
     
         <p style="color:#333;font-size:16px;">
-          <strong>${draw.organizer}</strong> has added you to their Secret Santa group.<br/>
+          <strong>${capitalizeFirstLetter(
+            draw.organizer
+          )}</strong> has added you to their Secret Santa group.<br/>
           Click the button below to access your Secret Santa page:
         </p>
     

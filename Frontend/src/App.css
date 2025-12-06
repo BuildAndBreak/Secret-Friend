@@ -11,7 +11,7 @@ body {
 
 .container {
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   padding: var(--space-lg);
   border-radius: var(--space-lg);
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
@@ -48,4 +48,31 @@ footer {
   color: var(--color-text-secondary);
   padding: var(--space-md);
   margin-top: var(--space-xl);
+}
+
+/* SCROLLBAR - Chrome, Edge, Safari */
+
+.scrollbar::-webkit-scrollbar {
+  width: 6px; /* mantém a barra normal */
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* cor do fundo da barra */
+  border-radius: var(--space-xs);
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25); /* cor do "botão" */
+  border-radius: 6px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Firefox */
+
+.scrollbar {
+  scrollbar-color: transparent;
+  /* thumb   track */
 }

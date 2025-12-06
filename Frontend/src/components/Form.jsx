@@ -72,7 +72,7 @@ export default function Form() {
               checked={includeOrganizer}
               onChange={(e) => setIncludeOrganizer(e.target.checked)}
             />
-            I want to draw names with myself.
+            I want to participate in the group
           </label>
 
           <label htmlFor="email">Email:</label>
