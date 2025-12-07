@@ -16,6 +16,12 @@
   padding: var(--space-xxs);
 }
 
+.step-3 .icon-button:hover {
+  background-color: var(--color-red);
+  color: white;
+  transition: 0.3s;
+}
+
 .step-3 .btn-exclusions {
   background-color: var(--color-btn-secondary);
   color: var(--color-white);

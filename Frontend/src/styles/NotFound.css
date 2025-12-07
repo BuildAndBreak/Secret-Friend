@@ -1,0 +1,53 @@
+.notfound-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-lg);
+  background: var(--color-green);
+}
+
+.notfound-card {
+  text-align: center;
+  background: var(--color-white);
+  padding: var(--space-xl);
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  max-width: 420px;
+  width: 100%;
+}
+
+.notfound-card h1 {
+  font-size: 5rem;
+  color: var(--color-red);
+  font-weight: 900;
+}
+
+.notfound-card p {
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  color: var(--color-dark-gray);
+  font-size: var(--font-md);
+}
+
+.notfound-card .emoji {
+  font-size: 2.5rem;
+  margin-top: var(--space-md);
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-btn-primary);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: var(--font-sm);
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  background: var(--color-btn-primary-hover);
+}

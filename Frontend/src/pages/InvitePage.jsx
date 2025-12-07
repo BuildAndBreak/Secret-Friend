@@ -7,6 +7,7 @@ import {
   Gift,
   MessageSquare,
   Lock,
+  HandHeart,
   Unlock,
   SendHorizonal,
 } from "lucide-react";
@@ -14,6 +15,9 @@ import { API } from "../api/draws";
 import "../styles/InvitePage.css";
 import Footer from "../components/Footer";
 import { capitalizeFirstLetter } from "../utils/capitalize";
+import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
+import { launchFireworks } from "../utils/fireworks";
 
 export default function InvitePage() {
   const { token } = useParams();
@@ -23,14 +27,28 @@ export default function InvitePage() {
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [wishlistItem, setWishlistItem] = useState("");
   const [chatInput, setChatInput] = useState("");
+  const [secretWishList, setSecretWishList] = useState([]);
   const chatBox = useRef(null);
+
+  const navigate = useNavigate();
 
   // Fetch member data
   async function loadMember() {
     try {
       const res = await fetch(`${API}/api/invites/${token}`);
+
+      if (res.status === 404) {
+        return navigate("/404");
+      }
+
+      if (!res.ok) throw new Error("Server error");
+
       const data = await res.json();
       setData(data);
+
+      if (data?.secretWishlist?.length > 0) {
+        setSecretWishList(data.secretWishlist);
+      }
 
       // Auto-scroll chat
       setTimeout(() => {
@@ -41,6 +59,7 @@ export default function InvitePage() {
       }, 100);
     } catch (err) {
       console.error(err);
+      navigate("/404");
     } finally {
       setLoading(false);
     }
@@ -119,34 +138,34 @@ export default function InvitePage() {
 
   if (!data) return <p className="error-text">Invalid or expired link.</p>;
 
-  const canReveal = data.poll.allVoted;
+  const canReveal = data.poll?.allVoted;
 
   return (
     <div className="App">
+      <header>
+        <Header />
+      </header>
       <div className="container invite-container">
-        {/* HEADER */}
-        <header className="invite-header">
-          <h1>🎅 Welcome, {capitalizeFirstLetter(data.member.name)}!</h1>
-        </header>
+        <h2>🎅 Welcome, {capitalizeFirstLetter(data.member?.name)}!</h2>
 
         {/* MEMBERS */}
-        <section className="card">
-          <h2 className="card-title">
+        <section className="card members-card">
+          <h3 className="card-title">
             <Users size={20} /> Group Members
-          </h2>
+          </h3>
 
-          <ul className="members-list">
+          <ol className="members-list">
             {data.participants?.map((m, i) => (
               <li key={i}>{capitalizeFirstLetter(m.name)}</li>
             ))}
-          </ul>
+          </ol>
         </section>
 
         {/* POLL */}
-        <section className="card">
-          <h2 className="card-title">
+        <section className="card poll-card">
+          <h3 className="card-title">
             <Vote size={20} /> Gift Price Vote
-          </h2>
+          </h3>
           {data.poll?.allVoted && data.poll?.memberVote?.option && (
             <p className="final-price">
               🎁 Final chosen price: <strong>{data.poll.finalPrice}€</strong>
@@ -194,9 +213,12 @@ export default function InvitePage() {
               <p className="feedback-success">
                 🎉 Thank you! Your vote has been registered.
               </p>
-              <p className="feedback-waiting">
-                ⏳ Waiting for everyone to finish voting…
-              </p>
+              <div className="feedback-waiting-container">
+                <span>⏳</span>
+                <p className="feedback-waiting">
+                  Waiting for everyone to finish voting…
+                </p>
+              </div>
 
               <p className="feedback-info">
                 The final gift price will appear here as soon as all members
@@ -207,54 +229,76 @@ export default function InvitePage() {
         </section>
 
         {/* WISHLIST */}
-        <section className="card">
-          <h2 className="card-title">
-            <Gift size={20} /> Wishlist
-          </h2>
+        <div className="wishlist-container">
+          <section className="card">
+            <h3 className="card-title">
+              <Gift size={20} /> My Wishlist
+            </h3>
 
-          <ol className="wishlist">
-            {data.member?.wishlist?.length === 0 && (
-              <p className="none">No items yet.</p>
+            <ul className="wishlist">
+              {data.member?.wishlist?.length === 0 && (
+                <p className="none">No items yet.</p>
+              )}
+
+              {data.member?.wishlist.map((w) => (
+                <li key={w.id}>{w.text}</li>
+              ))}
+            </ul>
+            {data.member?.wishlist?.length < 3 && (
+              <div className="gift-info">
+                <small>*You can choose up to 3 gift ideas.</small>
+                <small>
+                  *Think wisely, once added, there is no way to remove it!
+                </small>
+
+                <div className="wishlist-input">
+                  <input
+                    type="text"
+                    placeholder="Gift idea…"
+                    value={wishlistItem}
+                    onChange={(e) => setWishlistItem(e.target.value)}
+                  />
+
+                  <button className="btn btn-green" onClick={addWishlist}>
+                    Add
+                  </button>
+                </div>
+              </div>
             )}
-
-            {data.member?.wishlist.map((w) => (
-              <li key={w.id}>{w.text}</li>
-            ))}
-          </ol>
-          <div className="gift-info">
-            <small>*You can choose up to 3 gift ideas.</small>
-            <small>
-              *Think wisely, once added, there is no way to remove it!
-            </small>
-          </div>
-          <div className="wishlist-input">
-            <input
-              type="text"
-              placeholder="Gift idea…"
-              value={wishlistItem}
-              onChange={(e) => setWishlistItem(e.target.value)}
-            />
-
-            <button className="btn btn-green" onClick={addWishlist}>
-              Add
-            </button>
-          </div>
-        </section>
+          </section>
+          <section className="card">
+            <h3 className="card-title">
+              <HandHeart size={20} />
+              Friend's Wishlist
+            </h3>
+            {secretWishList >= 0 && (
+              <small className="gift-info">
+                Your secret friends wishlist will be shown here once the gift
+                price vote is finished.
+              </small>
+            )}
+            <ul className="wishlist">
+              {secretWishList.map((el) => {
+                return data.poll?.allVoted && <li key={el.id}>{el.text}</li>;
+              })}
+            </ul>
+          </section>
+        </div>
 
         {/* CHAT */}
         <section className="card">
-          <h2 className="card-title">
+          <h3 className="card-title">
             <MessageSquare size={20} /> Public Chat
-          </h2>
+          </h3>
 
           <div className="chat-box" ref={chatBox}>
-            {data.messages.length === 0 ? (
+            {data.messages?.length === 0 ? (
               <p className="none">No messages yet.</p>
             ) : (
               data.messages.map((msg, i) => (
-                <div className="chat-msg" key={i}>
-                  <strong>{msg.nickname}: </strong> {msg.text}
-                </div>
+                <small className="chat-msg" key={i}>
+                  <strong>{msg.nickname}: &nbsp; </strong> {msg.text}
+                </small>
               ))
             )}
           </div>
@@ -274,28 +318,33 @@ export default function InvitePage() {
 
         {/* REVEAL */}
         <section className="card reveal-card">
-          <h2 className="card-title">🎁 Your Secret Friend</h2>
+          <h3 className="card-title">🎁 Your Secret Friend</h3>
 
-          <button
-            className="btn btn-primary reveal-btn"
-            disabled={!canReveal}
-            onClick={() => setOpen(true)}>
-            {!canReveal ? (
-              <div className="btn-reveal-container">
-                <Lock size={18} />
-                <span>Waiting for everyone to vote…</span>
-              </div>
-            ) : (
-              <div className="reveal-btn-cnt">
-                {open ? <Unlock size={18} /> : <Lock size={18} />}
-                <span>Reveal!</span>
-              </div>
-            )}
-          </button>
+          {!open && (
+            <button
+              className="btn btn-primary reveal-btn"
+              disabled={!canReveal}
+              onClick={() => {
+                setOpen(true);
+                launchFireworks();
+              }}>
+              {!canReveal ? (
+                <div className="btn-reveal-container">
+                  <Lock size={18} />
+                  <span>Waiting for everyone to vote…</span>
+                </div>
+              ) : (
+                <div className="reveal-btn-cnt">
+                  <Lock size={18} />
+                  <span>Reveal!</span>
+                </div>
+              )}
+            </button>
+          )}
 
           {open && (
-            <p className="reveal-result">
-              🎉 You got:
+            <p className="reveal-result animate-reveal">
+              🎉 You got: &nbsp;
               <strong>{capitalizeFirstLetter(data.toName)}</strong>
             </p>
           )}

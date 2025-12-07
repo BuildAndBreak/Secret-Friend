@@ -31,6 +31,10 @@ router.get("/:token", async (req, res) => {
   const toId = pair?.toId || null;
   const toName = toId ? map[toId] : null;
 
+  const toMember = draw.members.find((m) => m.id === toId);
+  const secretWishlist =
+    toMember?.wishlist?.length > 0 ? toMember.wishlist : null;
+
   // member's poll vote
   const votes = draw.giftPoll?.votes;
   const memberVote = votes?.find((v) => v.memberId === member.id) || null;
@@ -54,6 +58,7 @@ router.get("/:token", async (req, res) => {
     },
     toId: canReveal && toId ? toId : null,
     toName: canReveal && toName ? toName : null,
+    secretWishlist,
     messages: draw.messages?.slice(-50) || [], // last 50 msgs
   });
 });

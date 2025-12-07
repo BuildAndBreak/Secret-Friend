@@ -1,0 +1,111 @@
+.homepage section {
+  width: calc(100% - 2rem);
+  max-width: 650px;
+  background-color: var(--color-cream);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--space-md);
+  margin: 0 1rem;
+  padding: var(--space-md);
+}
+
+.homepage .santa-img {
+  max-width: 100%;
+  max-height: 550px;
+  border-radius: var(--space-md);
+}
+
+.homepage h2 {
+  padding-top: var(--space-md);
+}
+
+.homepage .intro-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.homepage .intro-text p {
+  margin-top: 1rem;
+  color: var(--color-dark-gray);
+  font-size: var(--font-sm);
+  line-height: 1.6;
+}
+
+.homepage .intro-text .highlight {
+  font-weight: 600;
+  font-size: var(--font-md);
+  color: var(--color-red);
+}
+
+.homepage ul {
+  color: var(--color-dark-gray);
+  font-size: var(--font-sm);
+  line-height: 2;
+}
+
+.homepage ul li {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+.homepage ul li::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-image: url("/assets/images/gold-star-li.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-right: 5px;
+}
+
+.homepage button {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--space-xs);
+  border: none;
+  background-color: var(--color-red);
+  color: var(--color-white);
+  font-size: var(--font-md);
+  font-weight: 500;
+  margin-top: var(--space-md);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.homepage button:hover {
+  background-color: var(--color-btn-primary-hover);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+@media ((orientation: landscape)) {
+  .homepage section {
+    max-width: 800px;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  picture {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .homepage .santa-img {
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .homepage .intro-text {
+    margin-left: var(--space-md);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

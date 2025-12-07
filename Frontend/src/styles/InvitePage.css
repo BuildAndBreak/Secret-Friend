@@ -1,12 +1,13 @@
-/* HEADER */
-.invite-container .invite-header {
-  text-align: center;
+.invite-container {
+  margin: 0 auto;
 }
 
-.invite-container .invite-header h1 {
+.invite-container h2 {
+  text-align: center;
   font-size: var(--font-lg);
   color: var(--color-red);
   font-weight: 700;
+  margin-bottom: var(--space-md);
 }
 
 /* CARD */
@@ -31,14 +32,14 @@
 /* MEMBERS */
 .invite-container .members-list {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  list-style: none;
-  padding-left: 0;
+  grid-auto-flow: column; /* preenche por colunas */
+  grid-auto-rows: auto; /* altura automática */
+  grid-template-rows: repeat(5, auto); /* força 5 linhas */
+  padding-left: 1rem;
 }
 
 .invite-container .members-list li {
   padding: var(--space-xxs) 0;
-  border-bottom: 1px solid #ddd;
 }
 
 /* POLL */
@@ -102,7 +103,7 @@
 }
 
 .invite-container .final-price {
-  color: var(--color-green);
+  color: var(--color-dark-gray);
   font-weight: 600;
 }
 
@@ -118,6 +119,10 @@
   font-weight: 600;
   color: var(--color-green);
   margin-bottom: var(--space-xs);
+}
+
+.invite-container .feedback-waiting-container {
+  display: flex;
 }
 
 .invite-container .feedback-waiting {
@@ -145,20 +150,34 @@
 }
 
 /* WISHLIST */
-.invite-container .wishlist {
-  padding: 1rem;
+
+.invite-container .wishlist-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
 }
 
 .invite-container .wishlist li {
-  background: var(--color-white);
-  border: 1px solid #ddd;
-  padding: var(--space-xs);
-  border-radius: var(--space-xs);
-  margin-bottom: var(--space-xxs);
+  list-style: none;
+  padding-bottom: var(--space-sm);
+  gap: var(--space-xxs);
+  display: flex;
+  align-items: center;
+}
+
+.invite-container ul li::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-image: url("/assets/images/gold-star-li.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .invite-container .wishlist-input {
   display: flex;
+  margin-top: var(--space-sm);
   gap: var(--space-xs);
 }
 
@@ -187,6 +206,7 @@
 }
 
 .invite-container .chat-msg {
+  display: flex;
   padding: var(--space-xxs) 0;
 }
 
@@ -256,7 +276,27 @@
   justify-content: center;
   margin-top: var(--space-sm);
   font-size: var(--font-lg);
-  color: var(--color-green);
+  color: var(--color-dark-gray);
+  opacity: 0;
+}
+
+.animate-reveal {
+  animation: revealPop 0.7s ease-out forwards;
+}
+
+@keyframes revealPop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .invite-container .reveal-btn-cnt {
@@ -280,4 +320,27 @@
   color: var(--color-red);
   text-align: center;
   margin-top: 2rem;
+}
+
+@media (min-width: 900px) {
+  .invite-container {
+    max-width: 950px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .invite-container .card {
+    padding: var(--space-lg);
+  }
+
+  .invite-container h2 {
+    font-size: var(--font-xl);
+    grid-column: span 2;
+  }
+
+  .invite-container .reveal-card {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+  }
 }

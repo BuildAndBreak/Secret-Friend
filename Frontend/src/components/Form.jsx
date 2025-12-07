@@ -62,7 +62,7 @@ export default function Form() {
 
           {error.name && (
             <span className="error-container">
-              <CircleAlert /> <small>{error.name}</small>
+              <CircleAlert size={16} /> <small>{error.name}</small>
             </span>
           )}
 
@@ -89,7 +89,7 @@ export default function Form() {
 
           {error.email && (
             <span className="error-container">
-              <CircleAlert /> <small>{error.email}</small>
+              <CircleAlert size={16} /> <small>{error.email}</small>
             </span>
           )}
 

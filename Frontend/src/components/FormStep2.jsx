@@ -180,7 +180,7 @@ export default function FormStep2({
                 <label htmlFor={inputId}>Member {MemberNum}</label>
                 <button
                   type="button"
-                  className="remove-btn"
+                  className="remove-mem-btn"
                   onClick={() => removeMember(member.id)}
                   disabled={!canRemove}
                   aria-label={`Remove member ${MemberNum}`}
@@ -189,7 +189,7 @@ export default function FormStep2({
                       ? "Cannot remove below minimum members"
                       : "Remove member"
                   }>
-                  <CircleX color="var(--color-red)" />
+                  <CircleX />
                 </button>
               </div>
 

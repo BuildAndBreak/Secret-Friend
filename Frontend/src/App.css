@@ -4,28 +4,43 @@
   flex-direction: column;
 }
 
+header {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 130px;
+}
+
+header h1 {
+  color: var(--color-white);
+  font-family: "Carattere", cursive;
+  font-size: 4rem;
+}
+
+header img {
+  position: absolute;
+  top: 50%;
+  right: 70px;
+  transform: translateY(-55%);
+  z-index: -1;
+}
+
 body {
-  min-height: 100vh;
-  background: no-repeat center/cover url("/background-mobile.jpg");
+  background-color: #1b4d3e;
 }
 
 .container {
-  width: 100%;
-  max-width: 600px;
+  width: calc(100% - 2rem);
+  max-width: 500px;
   padding: var(--space-lg);
   border-radius: var(--space-lg);
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
   background-color: var(--color-cream);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  margin: 2rem auto;
+  gap: var(--space-xs);
   font-family: var(--font-primary);
-}
-
-header {
-  align-self: center;
-  margin-bottom: var(--space-xl);
 }
 
 h2 {
@@ -50,19 +65,24 @@ footer {
   margin-top: var(--space-xl);
 }
 
+footer a {
+  text-decoration: underline;
+  color: var(--color-white);
+}
+
 /* SCROLLBAR - Chrome, Edge, Safari */
 
 .scrollbar::-webkit-scrollbar {
-  width: 6px; /* mantém a barra normal */
+  width: 6px;
 }
 
 .scrollbar::-webkit-scrollbar-track {
-  background: transparent; /* cor do fundo da barra */
+  background: transparent;
   border-radius: var(--space-xs);
 }
 
 .scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.25); /* cor do "botão" */
+  background: rgba(0, 0, 0, 0.25); /* button */
   border-radius: 6px;
 }
 
@@ -74,5 +94,4 @@ footer {
 
 .scrollbar {
   scrollbar-color: transparent;
-  /* thumb   track */
 }
