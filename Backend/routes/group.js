@@ -96,6 +96,10 @@ router.get("/:code/verify", async (req, res) => {
       .json({ message: `Group is ${draw.status}, nothing to verify.` });
   }
 
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   if (!t || t !== draw.organizerVerifyToken) {
     return res.status(400).json({ message: "Invalid or missing token" });
   }
@@ -118,6 +122,8 @@ router.get("/:code/verify", async (req, res) => {
         ? organizerEmail({ draw, url })
         : membersEmail({ m, draw, url }),
     });
+
+    await wait(150);
     m.inviteSentAt = new Date();
   }
 
