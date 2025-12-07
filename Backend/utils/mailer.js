@@ -1,43 +1,19 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-let transporter = null;
-
-if (process.env.SMTP_HOST) {
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: false,
-    auth: process.env.SMTP_USER
-      ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-      : undefined,
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
-}
-
-if (transporter) {
-  transporter.verify((err) => {
-    if (err) {
-      console.error("SMTP error:", err);
-    } else {
-      console.log("SMTP ready to send emails");
-    }
-  });
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendMail({ to, subject, html }) {
-  // dev
-  if (!transporter) {
-    console.log("[DEV MAIL]", { to, subject, html });
-    return;
-  }
+  try {
+    await resend.emails.send({
+      from: "Secret Santa 🎅 <noreply@resend.dev>",
+      to,
+      subject,
+      html,
+    });
 
-  // produção
-  return transporter.sendMail({
-    from: process.env.SENDER_EMAIL,
-    to,
-    subject,
-    html,
-  });
+    return { ok: true };
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return { ok: false, error };
+  }
 }
