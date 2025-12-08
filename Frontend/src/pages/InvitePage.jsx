@@ -272,10 +272,15 @@ export default function InvitePage() {
               Friend's Wishlist
             </h3>
             {secretWishList >= 0 && (
-              <small className="gift-info">
-                Your secret friends wishlist will be shown here once the gift
-                price vote is finished.
-              </small>
+              <>
+                <small className="gift-info">
+                  Your secret friends wishlist will be shown here once the gift
+                  price vote is finished.
+                </small>
+                <small className="gift-info">
+                  *Of course if they added any gift ideas!
+                </small>
+              </>
             )}
             <ul className="wishlist">
               {secretWishList.map((el) => {
@@ -297,7 +302,10 @@ export default function InvitePage() {
             ) : (
               data.messages.map((msg, i) => (
                 <small className="chat-msg" key={i}>
-                  <strong>{msg.nickname}: &nbsp; </strong> {msg.text}
+                  <small>
+                    <strong>{msg.nickname}: &nbsp;</strong>
+                  </small>{" "}
+                  {msg.text}
                 </small>
               ))
             )}
