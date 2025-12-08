@@ -7,11 +7,11 @@ pnpm-*.log*
 lerna-debug.log*
 
 # Dependencies / builds
-/frontend/node_modules
-/backend/node_modules
-/frontend/dist
-/backend/dist
-/backend/build
+/Frontend/node_modules
+/Backend/node_modules
+/Frontend/dist
+/Backend/dist
+/Backend/build
 /coverage
 
 # Env 
