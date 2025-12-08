@@ -25,7 +25,7 @@ export async function sendMail({ to, subject, html }) {
       return { ok: false, error: data };
     }
 
-    console.log("EMAIL SENT:", data.messageId || data);
+    console.log("EMAIL SENT TO:", to || data);
     return { ok: true, data };
   } catch (err) {
     console.error("BREVO API ERROR:", err);
