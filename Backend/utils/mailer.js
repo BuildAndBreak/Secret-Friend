@@ -1,28 +1,36 @@
-import nodemailer from "nodemailer";
-
-export const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+import fetch from "node-fetch";
 
 export async function sendMail({ to, subject, html }) {
   try {
-    const info = await transporter.sendMail({
-      from: `"Secret Santa 🎅" <${process.env.SENDER_EMAIL}>`,
-      to,
-      subject,
-      html,
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: {
+          name: process.env.SENDER_NAME,
+          email: process.env.SENDER_EMAIL,
+        },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
     });
 
-    console.log("EMAIL SENT:", info.messageId);
-    return { ok: true };
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("BREVO API ERROR:", data);
+      return { ok: false, error: data };
+    }
+
+    console.log("EMAIL SENT:", data.messageId || data);
+    return { ok: true, data };
   } catch (err) {
-    console.error("EMAIL ERROR:", err);
+    console.error("BREVO API ERROR:", err);
     return { ok: false, error: err };
   }
 }
