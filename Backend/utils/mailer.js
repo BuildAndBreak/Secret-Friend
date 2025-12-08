@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export async function sendMail({ to, subject, html }) {
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
