@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API } from "../api/draws";
 import "../styles/VerifyPage.css";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 export default function VerifyPage() {
   const [status, setStatus] = useState("Verification in progress…");
@@ -68,11 +69,10 @@ export default function VerifyPage() {
 
   return (
     <div className="App">
-      <main>
-        <div className="verify-card">
-          <header>
-            <h1>Group Verification</h1>
-          </header>
+      <main className="">
+        <Header />
+        <div className="container verify-card">
+          <h1>Group Verification</h1>
           <p className="verify-status">{status}</p>
 
           {isDone && (

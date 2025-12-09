@@ -1,41 +1,21 @@
-.verify-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--space-lg);
-}
-
 .verify-card {
-  background: var(--color-white);
-  padding: var(--space-lg);
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 420px;
   text-align: center;
-  color: var(--color-text-primary);
 }
 
 .verify-card h1 {
   color: var(--color-red);
   font-size: var(--font-lg);
   font-family: var(--font-primary);
+  margin: var(--space-lg);
 }
 
-.verify-card h2 {
-  font-size: var(--font-lg);
-  margin-bottom: var(--space-md);
-  color: var(--color-dark-gray);
-}
-
-.verify-status {
+.verify-card .verify-status {
   font-size: var(--font-md);
   margin-bottom: var(--space-md);
   color: var(--color-dark-gray);
 }
 
-.verify-hint {
+.verify-card .verify-hint {
   margin-top: var(--space-md);
   font-size: var(--font-xs);
   opacity: 0.8;
