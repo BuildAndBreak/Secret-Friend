@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
-import { ClipLoader } from "react-spinners";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { RingLoader } from "react-spinners";
 import {
   Users,
   Vote,
@@ -8,7 +8,6 @@ import {
   MessageSquare,
   Lock,
   HandHeart,
-  Unlock,
   SendHorizonal,
 } from "lucide-react";
 import { API } from "../api/draws";
@@ -33,7 +32,7 @@ export default function InvitePage() {
   const navigate = useNavigate();
 
   // Fetch member data
-  async function loadMember() {
+  const loadMember = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/invites/${token}`);
 
@@ -63,17 +62,17 @@ export default function InvitePage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token, navigate]);
 
   useEffect(() => {
     loadMember();
-  }, [token]);
+  }, [loadMember]);
 
   // Poll every 3 seconds
   useEffect(() => {
     const id = setInterval(loadMember, 3000);
     return () => clearInterval(id);
-  }, []);
+  }, [loadMember]);
 
   async function vote(option) {
     try {
@@ -132,7 +131,9 @@ export default function InvitePage() {
   if (loading)
     return (
       <div className="loader-center">
-        <ClipLoader size={50} color="var(--color-red)" />
+        <RingLoader size={100} color="var(--color-red)" />
+        <p className="loading-message">Loading your Secret Santa page</p>
+        <p>This can take a while if the server is waking up… </p>
       </div>
     );
 

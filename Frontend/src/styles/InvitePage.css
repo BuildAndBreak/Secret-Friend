@@ -195,6 +195,10 @@
   font-weight: 300;
 }
 
+.invite-container .none {
+  opacity: 0.6;
+}
+
 /* CHAT */
 .invite-container .chat-box {
   height: 180px;
@@ -306,17 +310,26 @@
   gap: var(--space-xxs);
 }
 
-/* UTILITIES */
-.invite-container .loader-center {
+/* LOADING */
+.loader-center {
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding-top: 3rem;
 }
 
-.invite-container .none {
-  opacity: 0.6;
+.loader-center p {
+  margin-top: var(--space-md);
+  font-size: var(--font-sm);
+  color: var(--color-white);
 }
 
+.loader-center .loading-message {
+  font-size: var(--font-lg);
+}
+
+/* ERROR */
 .invite-container .error-text {
   color: var(--color-red);
   text-align: center;
