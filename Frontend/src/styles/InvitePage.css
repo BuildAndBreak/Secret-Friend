@@ -141,10 +141,6 @@
 
 .invite-container .not-voted-list {
   font-size: var(--font-sm);
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-rows: auto;
-  grid-template-rows: repeat(3, auto);
 }
 
 .invite-container .share-whatsapp {

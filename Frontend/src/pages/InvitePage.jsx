@@ -235,29 +235,30 @@ export default function InvitePage() {
                   Waiting for everyone to finish voting…
                 </p>
               </div>
-
-              <ul className="not-voted-list">
-                {data.notVoted?.length < 3 && (
+              <div>
+                {data.notVoted?.length > 0 && data.notVoted?.length <= 3 && (
                   <>
-                    <small className="not-voted-info">
-                      <strong>Members who haven't voted yet:</strong>
-                    </small>
-                    {data.notVoted?.map((m) => (
-                      <li key={m.id}>{capitalizeFirstLetter(m.name)}</li>
-                    ))}
+                    <ul className="not-voted-list">
+                      <small className="not-voted-info">
+                        <strong>Members who haven't voted yet:</strong>
+                      </small>
+
+                      {data.notVoted?.map((m) => (
+                        <li key={m.id}>{capitalizeFirstLetter(m.name)}</li>
+                      ))}
+                    </ul>
+                    <button
+                      className="share-whatsapp"
+                      type="button"
+                      onClick={handleWhatsAppShare}
+                      aria-label="Share on WhatsApp"
+                      title="Share via Whatsapp">
+                      <WhatsappIcon size={24} round />
+                      Send reminder
+                    </button>
                   </>
                 )}
-              </ul>
-
-              <button
-                className="share-whatsapp"
-                type="button"
-                onClick={handleWhatsAppShare}
-                aria-label="Share on WhatsApp"
-                title="Share via Whatsapp">
-                <WhatsappIcon size={24} round />
-                Send reminder
-              </button>
+              </div>
 
               <p className="feedback-info">
                 The final gift price will appear here as soon as all members
