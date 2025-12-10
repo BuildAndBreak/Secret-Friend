@@ -1,12 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { RingLoader } from "react-spinners";
+import { WhatsappIcon } from "react-share";
 import {
   Users,
   Vote,
   Gift,
   MessageSquare,
   Lock,
+  Unlock,
   HandHeart,
   SendHorizonal,
 } from "lucide-react";
@@ -128,6 +130,18 @@ export default function InvitePage() {
     }
   }
 
+  const names = data?.notVoted
+    ?.map((m) => capitalizeFirstLetter(m.name))
+    .join(", ");
+  const shareMessage = `Reminder for ${names} \nPlease vote on the gift budget to unlock your Secret Santa.`;
+  const whatsappHref = `https://wa.me/?text=${encodeURIComponent(
+    shareMessage
+  )}`;
+
+  function handleWhatsAppShare() {
+    window.open(whatsappHref, "_blank");
+  }
+
   if (loading)
     return (
       <div className="loader-center">
@@ -150,14 +164,14 @@ export default function InvitePage() {
         <h2>🎅 Welcome, {capitalizeFirstLetter(data.member?.name)}!</h2>
 
         {/* MEMBERS */}
-        <section className="card members-card">
+        <section className="card">
           <h3 className="card-title">
             <Users size={20} /> Group Members
           </h3>
 
           <ol className="members-list">
-            {data.participants?.map((m, i) => (
-              <li key={i}>{capitalizeFirstLetter(m.name)}</li>
+            {data.participants?.map((m) => (
+              <li key={m.id}>{capitalizeFirstLetter(m.name)}</li>
             ))}
           </ol>
         </section>
@@ -216,10 +230,34 @@ export default function InvitePage() {
               </p>
               <div className="feedback-waiting-container">
                 <span>⏳</span>
+
                 <p className="feedback-waiting">
                   Waiting for everyone to finish voting…
                 </p>
               </div>
+
+              <ul className="not-voted-list">
+                {data.notVoted?.length < 3 && (
+                  <>
+                    <small className="not-voted-info">
+                      <strong>Members who haven't voted yet:</strong>
+                    </small>
+                    {data.notVoted?.map((m) => (
+                      <li key={m.id}>{capitalizeFirstLetter(m.name)}</li>
+                    ))}
+                  </>
+                )}
+              </ul>
+
+              <button
+                className="share-whatsapp"
+                type="button"
+                onClick={handleWhatsAppShare}
+                aria-label="Share on WhatsApp"
+                title="Share via Whatsapp">
+                <WhatsappIcon size={24} round />
+                Send reminder
+              </button>
 
               <p className="feedback-info">
                 The final gift price will appear here as soon as all members
@@ -344,7 +382,7 @@ export default function InvitePage() {
                 </div>
               ) : (
                 <div className="reveal-btn-cnt">
-                  <Lock size={18} />
+                  <Unlock size={18} />
                   <span>Reveal!</span>
                 </div>
               )}

@@ -31,10 +31,11 @@
 
 /* MEMBERS */
 .invite-container .members-list {
+  font-size: var(--font-sm);
   display: grid;
-  grid-auto-flow: column; /* preenche por colunas */
-  grid-auto-rows: auto; /* altura automática */
-  grid-template-rows: repeat(5, auto); /* força 5 linhas */
+  grid-auto-flow: column;
+  grid-auto-rows: auto;
+  grid-template-rows: repeat(5, auto);
   padding-left: 1rem;
 }
 
@@ -129,13 +130,42 @@
   font-size: var(--font-sm);
   color: var(--color-dark-gray);
   font-style: italic;
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-md);
 }
 
 .invite-container .feedback-info {
   font-size: var(--font-xs);
   color: var(--color-gray);
-  margin-top: var(--space-xxs);
+  margin-top: var(--space-md);
+}
+
+.invite-container .not-voted-list {
+  font-size: var(--font-sm);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-rows: auto;
+  grid-template-rows: repeat(3, auto);
+}
+
+.invite-container .share-whatsapp {
+  border: 2px solid #25d366;
+  border-radius: var(--space-sm);
+  padding: var(--space-xxs) var(--space-sm);
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-sm);
+  gap: var(--space-xxs);
+  background: none;
+  cursor: pointer;
+}
+
+.invite-container .not-voted-info {
+  font-size: var(--font-sm);
+  font-weight: 400;
+}
+
+.invite-container .not-voted-list li {
+  list-style: none;
 }
 
 @keyframes fadeIn {

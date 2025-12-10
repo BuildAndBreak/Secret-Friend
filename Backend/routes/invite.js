@@ -45,9 +45,12 @@ router.get("/:token", async (req, res) => {
 
   const canReveal = allVoted;
 
+  const voted = new Set(draw.giftPoll.votes.map((v) => v.memberId));
+  const notVoted = draw.members.filter((m) => !voted.has(m.id));
+
   res.json({
     groupCode: draw.groupCode,
-    participants: draw.members.map((m) => ({ name: m.name })),
+    participants: draw.members.map((m) => ({ name: m.name, id: m.id })),
     member,
     poll: {
       options: draw.giftPoll?.options || [],
@@ -59,6 +62,7 @@ router.get("/:token", async (req, res) => {
     toId: canReveal && toId ? toId : null,
     toName: canReveal && toName ? toName : null,
     secretWishlist,
+    notVoted: notVoted.map((m) => ({ name: m.name, id: m.id })),
     messages: draw.messages?.slice(-50) || [], // last 50 msgs
   });
 });
