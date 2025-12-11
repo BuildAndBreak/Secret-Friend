@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 200;
 }
 
 .popup {
@@ -19,13 +19,13 @@
 
 .popup-actions {
   display: flex;
-  justify-content: space-between;
   margin-top: 1.5rem;
+  gap: var(--space-md);
 }
 
 .btn.restore {
   background: var(--color-green);
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md);
   color: var(--color-white);
   border-radius: var(--space-md);
 }
@@ -36,7 +36,7 @@
 
 .btn.discard {
   background: var(--color-red);
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md);
   color: var(--color-white);
   border-radius: var(--space-md);
 }
