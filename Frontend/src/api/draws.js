@@ -1,4 +1,3 @@
-// Frontend/src/api/draws.js
 export const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 async function parseErrorResponse(res) {
@@ -23,11 +22,24 @@ async function parseErrorResponse(res) {
   };
 }
 
+// Serialize exclusions for the backend / localStorage
 export function serializeExclusions(exclusions) {
   return Object.entries(exclusions).map(([ownerId, set]) => ({
     id: ownerId,
     excludedMemberIds: Array.from(set || []),
   }));
+}
+
+// Deserialize exclusions from localStorage (arrays to Sets)
+export function deserializeExclusions(serialized) {
+  if (!Array.isArray(serialized)) return {};
+  const out = {};
+  for (const item of serialized) {
+    const { id, excludedMemberIds } = item || {};
+    if (!id) continue;
+    out[id] = new Set(excludedMemberIds || []);
+  }
+  return out;
 }
 
 export async function createDraw(payload, { signal } = {}) {

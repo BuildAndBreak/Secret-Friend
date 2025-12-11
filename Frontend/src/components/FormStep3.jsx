@@ -1,7 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronDown, X } from "lucide-react";
 import "../styles/FormStep3.css";
-import { createDraw, serializeExclusions } from "../api/draws";
+import {
+  createDraw,
+  serializeExclusions,
+  deserializeExclusions,
+} from "../api/draws";
 import { API } from "../api/draws";
 import { ClipLoader } from "react-spinners";
 
@@ -13,16 +17,53 @@ export default function FormStep3({
   includeOrganizer,
   setError,
   email,
+  setDraftData,
 }) {
   const [dropdownMemberId, setDropdownMemberId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [exclusions, setExclusions] = useState({}); // directional
-  const [open, setOpen] = useState(false); // open exclusions
+  const [exclusions, setExclusions] = useState({});
+  const [open, setOpen] = useState(false);
   const ORGANIZER = "organizer";
   const organizerName = (nameOrganizer || "").trim();
 
+  // Save exclusions to LocalStorage on change
+  useEffect(() => {
+    if (Object.keys(exclusions).length === 0) return;
+
+    try {
+      const draftExists = localStorage.getItem("secret-santa-draft");
+      if (!draftExists) return;
+
+      const parsedDraft = JSON.parse(draftExists);
+
+      const serialized = serializeExclusions(exclusions);
+      const newDraft = { ...parsedDraft, exclusions: serialized };
+
+      setDraftData(newDraft);
+      localStorage.setItem("secret-santa-draft", JSON.stringify(newDraft));
+    } catch (err) {
+      console.error("Failed to save exclusions to localStorage:", err);
+    }
+  }, [exclusions, setDraftData]);
+
+  // Load exclusions from LocalStorage on mount
+  useEffect(() => {
+    const draftExists = localStorage.getItem("secret-santa-draft");
+    if (!draftExists) return;
+
+    try {
+      const parsedDraft = JSON.parse(draftExists);
+
+      if (Array.isArray(parsedDraft.exclusions)) {
+        setExclusions(deserializeExclusions(parsedDraft.exclusions));
+      }
+    } catch (err) {
+      console.error("Failed to load exclusions from draft", err);
+    }
+  }, []);
+
+  // Memoize so we don't rebuild on every render unless deps change
   const participants = useMemo(() => {
-    // memoize so we don't rebuild on every render unless deps change
     const ids = [];
     if (includeOrganizer && organizerName) ids.push(ORGANIZER);
     for (const m of members) ids.push(m.id);
@@ -43,14 +84,14 @@ export default function FormStep3({
   const isExcluded = (giverId, receiverId) =>
     !!exclusions[giverId]?.has(receiverId); // true if exclusions[giverId] exists and its Set has receiverId
 
-  // ---------- MATCHING CHECK (CORE ALGORITHM) ----------
-  /**
+  /*
    * Returns true if there's at least one perfect assignment (permutation) meeting:
    *  - every participant gives to exactly one distinct receiver,
    *  - nobody gives to themselves,
    *  - all directed exclusions (giver -> receiver) are respected.
-   * We use simple DFS backtracking; it's fast for typical Secret Santa sizes.
+   * Simple DFS backtracking;
    */
+
   function hasPerfectMatching(participants, exclMap) {
     const n = participants.length; // number of people
     const givers = participants.slice(); // copy array for clarity (order matters for DFS)
@@ -82,6 +123,7 @@ export default function FormStep3({
    * Simulate adding a new exclusion (ownerId -> targetId) to the map and test if it
    * would make a perfect matching impossible. Return true if it WOULD break (so we must refuse).
    */
+
   const wouldBreakIfAdd = (ownerId, targetId) => {
     const next = cloneExclusions(exclusions); // copy current exclusions immutably
     const A = next[ownerId] || new Set(); // get or create the Set for this giver
@@ -95,6 +137,7 @@ export default function FormStep3({
    * - If currently ON, remove it.
    * - If OFF, only add it if feasibility remains true (else show error and refuse).
    */
+
   function toggleExclusion(targetId, ownerId) {
     if (!ownerId || !targetId || ownerId === targetId) return; // guard: ignore invalid or self pair
 

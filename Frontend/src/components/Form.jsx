@@ -1,18 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/Form.css";
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, ChevronLeft } from "lucide-react";
 import FormStep2 from "./FormStep2";
 import FormStep3 from "./FormStep3";
 import VerifyPending from "./VerifyPending";
 
-export default function Form() {
-  const [includeOrganizer, setIncludeOrganizer] = useState(true);
-  const [email, setEmail] = useState("");
-  const [nameOrganizer, setNameOrganizer] = useState("");
-  const [members, setMembers] = useState([]);
+export default function Form({ draftData, setCreate, setDraftData }) {
+  const [includeOrganizer, setIncludeOrganizer] = useState(
+    draftData?.includeOrganizer ?? true
+  );
+  const [email, setEmail] = useState(draftData?.email ?? "");
+  const [nameOrganizer, setNameOrganizer] = useState(
+    draftData?.nameOrganizer ?? ""
+  );
+  const [members, setMembers] = useState(draftData?.members ?? []);
   const [error, setError] = useState({});
-  const [step, setStep] = useState(1);
-  const [requireInvites, setRequireInvites] = useState(false);
+  const [step, setStep] = useState(draftData?.step ?? 1);
+
+  useEffect(() => {
+    const draftExists = localStorage.getItem("secret-santa-draft");
+    const prevDraft = draftExists ? JSON.parse(draftExists) : null;
+
+    const draft = {
+      ...prevDraft,
+      includeOrganizer,
+      email,
+      nameOrganizer,
+      members,
+      step,
+    };
+    localStorage.setItem("secret-santa-draft", JSON.stringify(draft));
+  }, [includeOrganizer, email, nameOrganizer, members, step]);
 
   function Continue(e) {
     e.preventDefault();
@@ -46,7 +64,17 @@ export default function Form() {
       {/* FORM PART 1*/}
       {step === 1 && (
         <div className="container step-1 ">
-          <h2>Organizer</h2>
+          <div className="form-header">
+            <button
+              type="button"
+              aria-label="Back"
+              className="icon-button"
+              title="Go to Homepage"
+              onClick={() => setCreate(false)}>
+              <ChevronLeft size={28} />
+            </button>
+            <h2>Organizer</h2>
+          </div>
 
           <label htmlFor="name">What's your name?</label>
           <input
@@ -109,8 +137,6 @@ export default function Form() {
         includeOrganizer={includeOrganizer}
         members={members}
         setMembers={setMembers}
-        requireInvites={requireInvites}
-        setRequireInvites={setRequireInvites}
         emailOrganizer={email}
       />
 
@@ -123,7 +149,7 @@ export default function Form() {
         includeOrganizer={includeOrganizer}
         setError={setError}
         email={email}
-        setRequireInvites={setRequireInvites}
+        setDraftData={setDraftData}
       />
 
       {/* VERIFY PENDING */}

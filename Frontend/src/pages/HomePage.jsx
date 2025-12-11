@@ -1,14 +1,40 @@
 import Form from "../components/Form.jsx";
 import Footer from "../components/Footer.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/HomePage.css";
 import Header from "../components/Header.jsx";
+import Popup from "../components/Popup.jsx";
 
 export default function HomePage() {
   const [create, setCreate] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [draftData, setDraftData] = useState(null);
+
+  useEffect(() => {
+    const draft = localStorage.getItem("secret-santa-draft");
+    if (draft) {
+      setShowPopup(true);
+      setDraftData(JSON.parse(draft));
+    }
+  }, []);
+
+  function recoverDraft() {
+    setShowPopup(false);
+    setCreate(true);
+  }
+
+  function discardDraft() {
+    localStorage.removeItem("secret-santa-draft");
+    setDraftData(null);
+    setShowPopup(false);
+  }
 
   return (
     <div className="App homepage">
+      {showPopup && (
+        <Popup recoverDraft={recoverDraft} discardDraft={discardDraft} />
+      )}
+
       <main>
         <Header />
         {!create && (
@@ -55,7 +81,13 @@ export default function HomePage() {
           </section>
         )}
 
-        {create && <Form />}
+        {create && (
+          <Form
+            draftData={draftData}
+            setDraftData={setDraftData}
+            setCreate={setCreate}
+          />
+        )}
       </main>
 
       <Footer />

@@ -1,0 +1,46 @@
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.btn.restore {
+  background: var(--color-green);
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-white);
+  border-radius: var(--space-md);
+}
+
+.btn.restore:hover {
+  background: var(--color-btn-secondary-hover);
+}
+
+.btn.discard {
+  background: var(--color-red);
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-white);
+  border-radius: var(--space-md);
+}
+
+.btn.discard:hover {
+  background: var(--color-btn-primary-hover);
+}
