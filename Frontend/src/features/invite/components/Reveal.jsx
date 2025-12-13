@@ -8,6 +8,8 @@ export default function Reveal({ data }) {
   const [open, setOpen] = useState(false);
   const canReveal = data?.poll?.allVoted;
 
+  console.log("Reveal data:", data.toName);
+
   return (
     <section className="card reveal-card">
       <h3 className="card-title">🎁 Your Secret Friend</h3>

@@ -15,7 +15,7 @@ export default function Wishlist({ data, loadMember }) {
       return;
     }
 
-    if (data.member.wishlist.length >= 3) {
+    if (data?.member?.wishlist?.length >= 3) {
       setWishlistItem("");
       return;
     }
@@ -42,16 +42,14 @@ export default function Wishlist({ data, loadMember }) {
       </h3>
 
       <ul className="wishlist">
-        {data.member?.wishlist?.length === 0 && (
-          <p className="none">No items yet.</p>
+        {data?.member?.wishlist?.length === 0 ? (
+          <li className="none">No items yet.</li>
+        ) : (
+          data?.member?.wishlist?.map((w) => <li key={w.id}>{w.text}</li>)
         )}
-
-        {data.member?.wishlist.map((w) => (
-          <li key={w.id}>{w.text}</li>
-        ))}
       </ul>
 
-      {data.member?.wishlist?.length < 3 && (
+      {data?.member?.wishlist?.length < 3 && (
         <div className="gift-info">
           <small className="info-text">
             Once all members voted, click <strong>'Add'</strong> to include your

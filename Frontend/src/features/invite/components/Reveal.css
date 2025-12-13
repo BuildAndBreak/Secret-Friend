@@ -19,14 +19,14 @@
   opacity: 0;
 }
 
-.reveal-card.animate-reveal {
-  animation: revealPop 0.7s ease-out forwards;
-}
-
 .reveal-card .reveal-btn-cnt {
   display: flex;
   justify-content: center;
   gap: var(--space-xxs);
+}
+
+.reveal-result.animate-reveal {
+  animation: revealPop 0.7s ease-out forwards;
 }
 
 @keyframes revealPop {

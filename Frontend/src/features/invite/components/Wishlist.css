@@ -4,10 +4,12 @@
   gap: var(--space-xxs);
   display: flex;
   align-items: center;
+  word-break: break-word;
 }
 
 .wishlist-card ul li::before {
   content: "";
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
   background-image: url("/assets/images/gold-star-li.png");

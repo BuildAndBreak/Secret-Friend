@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HandHeart } from "lucide-react";
 
 export default function FriendsWishlist({ data }) {
   const [secretWishList, setSecretWishList] = useState([]);
 
-  if (data?.secretWishlist?.length > 0) {
-    setSecretWishList(data.secretWishlist);
-  }
+  useEffect(() => {
+    setSecretWishList(data?.secretWishlist ?? []);
+  }, [data?.secretWishlist]);
+
   return (
     <section className="card wishlist-card">
       <h3 className="card-title">
@@ -14,7 +15,7 @@ export default function FriendsWishlist({ data }) {
         Friend's Wishlist
       </h3>
 
-      {secretWishList >= 0 && (
+      {secretWishList.length === 0 && (
         <>
           <small className="info-text">
             Your secret friend's wishlist will be shown here once the gift price
