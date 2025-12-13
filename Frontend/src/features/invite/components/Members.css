@@ -1,0 +1,12 @@
+.members-card .members-list {
+  font-size: var(--font-sm);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-rows: auto;
+  grid-template-rows: repeat(5, auto);
+  padding-left: 1rem;
+}
+
+.members-card .members-list li {
+  padding: var(--space-xxs) 0;
+}

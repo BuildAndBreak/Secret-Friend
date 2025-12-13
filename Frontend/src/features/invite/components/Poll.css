@@ -1,0 +1,130 @@
+.poll-card .poll-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: var(--space-xs);
+}
+
+.poll-card .poll-btn {
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-white);
+  border: 2px solid var(--color-green);
+  border-radius: var(--space-xs);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.poll-card .poll-btn:hover {
+  background-color: var(--color-green);
+  color: var(--color-white);
+}
+
+.poll-card .poll-btn.selected {
+  background: var(--color-green);
+  color: var(--color-white);
+}
+
+.poll-card input {
+  width: 5rem;
+  border: 2px solid var(--color-green);
+  border-radius: var(--space-xs);
+}
+
+.poll-card .poll-btn-confirm:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.poll-card .poll-btn-confirm {
+  margin-top: var(--space-md);
+  padding: var(--space-xxs);
+  border-radius: var(--space-md);
+  border: none;
+  background-color: var(--color-red);
+  color: var(--color-white);
+  font-size: var(--font-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.poll-card .poll-btn-confirm:hover {
+  background-color: var(--color-btn-primary-hover);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.poll-card .waiting-text {
+  color: var(--color-red);
+  font-weight: 500;
+}
+
+.poll-card .final-price {
+  color: var(--color-dark-gray);
+  font-weight: 600;
+}
+
+.poll-card .vote-feedback {
+  background: var(--color-light-gray);
+  border-radius: 12px;
+  margin-top: var(--space-md);
+  animation: fadeIn 0.4s ease;
+}
+
+.poll-card .feedback-success {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-green);
+  margin-bottom: var(--space-xs);
+}
+
+.poll-card .feedback-waiting-container {
+  display: flex;
+}
+
+.poll-card .feedback-waiting {
+  font-size: var(--font-sm);
+  color: var(--color-dark-gray);
+  font-style: italic;
+  margin-bottom: var(--space-md);
+}
+
+.poll-card .feedback-info {
+  font-size: var(--font-xs);
+  color: var(--color-gray);
+  margin-top: var(--space-md);
+}
+
+.poll-card .not-voted-list {
+  font-size: var(--font-sm);
+}
+
+.poll-card .share-whatsapp {
+  border: 2px solid #25d366;
+  border-radius: var(--space-sm);
+  padding: var(--space-xxs) var(--space-sm);
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-sm);
+  gap: var(--space-xxs);
+  background: none;
+  cursor: pointer;
+}
+
+.poll-card .not-voted-info {
+  font-size: var(--font-sm);
+  font-weight: 400;
+}
+
+.poll-card .not-voted-list li {
+  list-style: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,45 @@
+.reveal-card {
+  text-align: center;
+}
+
+.reveal-card .btn-reveal-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xxs);
+}
+
+.reveal-card .reveal-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-sm);
+  font-size: var(--font-lg);
+  color: var(--color-dark-gray);
+  opacity: 0;
+}
+
+.reveal-card.animate-reveal {
+  animation: revealPop 0.7s ease-out forwards;
+}
+
+.reveal-card .reveal-btn-cnt {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xxs);
+}
+
+@keyframes revealPop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,34 +1,25 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { RingLoader } from "react-spinners";
-import { WhatsappIcon } from "react-share";
-import {
-  Users,
-  Vote,
-  Gift,
-  MessageSquare,
-  Lock,
-  Unlock,
-  HandHeart,
-  SendHorizonal,
-} from "lucide-react";
 import { API } from "../api/draws";
-import "../styles/InvitePage.css";
-import Footer from "../components/Footer";
 import { capitalizeFirstLetter } from "../utils/capitalize";
-import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
-import { launchFireworks } from "../utils/fireworks";
+import "../styles/InvitePage.css";
+
+import Header from "../components/Header";
+import Members from "../features/invite/components/Members";
+import Poll from "../features/invite/components/Poll";
+import Wishlist from "../features/invite/components/Wishlist";
+import Chat from "../features/invite/components/Chat";
+import FriendsWishlist from "../features/invite/components/FriendsWishlist";
+import Reveal from "../features/invite/components/Reveal";
+import Footer from "../components/Footer";
 
 export default function InvitePage() {
   const { token } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [selectedPrice, setSelectedPrice] = useState(null);
-  const [wishlistItem, setWishlistItem] = useState("");
-  const [chatInput, setChatInput] = useState("");
-  const [secretWishList, setSecretWishList] = useState([]);
+
   const chatBox = useRef(null);
 
   const navigate = useNavigate();
@@ -47,17 +38,13 @@ export default function InvitePage() {
       const data = await res.json();
       setData(data);
 
-      if (data?.secretWishlist?.length > 0) {
-        setSecretWishList(data.secretWishlist);
-      }
-
       // Auto-scroll chat
       setTimeout(() => {
         chatBox.current?.scrollTo({
           top: chatBox.current.scrollHeight,
           behavior: "smooth",
         });
-      }, 100);
+      }, 10000);
     } catch (err) {
       console.error(err);
       navigate("/404");
@@ -76,72 +63,6 @@ export default function InvitePage() {
     return () => clearInterval(id);
   }, [loadMember]);
 
-  async function vote(option) {
-    try {
-      await fetch(`${API}/api/groups/${data.groupCode}/poll/vote`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ memberId: data.member.id, option }),
-      });
-
-      loadMember();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function addWishlist() {
-    if (!wishlistItem.trim()) return;
-    if (data.member.wishlist.length >= 3) {
-      setWishlistItem("");
-      return;
-    }
-    try {
-      await fetch(
-        `${API}/api/groups/${data.groupCode}/wishlist/${data.member.id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: wishlistItem }),
-        }
-      );
-      setWishlistItem("");
-      loadMember();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function sendMsg() {
-    if (!chatInput.trim()) return;
-    try {
-      await fetch(`${API}/api/messages/${data.groupCode}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          memberId: data.member.id,
-          text: chatInput,
-        }),
-      });
-      setChatInput("");
-      loadMember();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  const names = data?.notVoted
-    ?.map((m) => capitalizeFirstLetter(m.name))
-    .join(", ");
-  const shareMessage = `Reminder for ${names} \nPlease vote on the gift budget to unlock your Secret Santa.`;
-  const whatsappHref = `https://wa.me/?text=${encodeURIComponent(
-    shareMessage
-  )}`;
-
-  function handleWhatsAppShare() {
-    window.open(whatsappHref, "_blank");
-  }
-
   if (loading)
     return (
       <div className="loader-center">
@@ -151,10 +72,6 @@ export default function InvitePage() {
       </div>
     );
 
-  if (!data) return <p className="error-text">Invalid or expired link.</p>;
-
-  const canReveal = data.poll?.allVoted;
-
   return (
     <div className="App">
       <header>
@@ -163,240 +80,17 @@ export default function InvitePage() {
       <div className="container invite-container">
         <h2>🎅 Welcome, {capitalizeFirstLetter(data.member?.name)}!</h2>
 
-        {/* MEMBERS */}
-        <section className="card">
-          <h3 className="card-title">
-            <Users size={20} /> Group Members
-          </h3>
+        <Members data={data} />
 
-          <ol className="members-list">
-            {data.participants?.map((m) => (
-              <li key={m.id}>{capitalizeFirstLetter(m.name)}</li>
-            ))}
-          </ol>
-        </section>
+        <Poll data={data} loadMember={loadMember} />
 
-        {/* POLL */}
-        <section className="card poll-card">
-          <h3 className="card-title">
-            <Vote size={20} /> Gift Price Vote
-          </h3>
-          {data.poll?.allVoted && data.poll?.memberVote?.option && (
-            <p className="final-price">
-              🎁 Final chosen price: <strong>{data.poll.finalPrice}€</strong>
-            </p>
-          )}
+        <Wishlist data={data} loadMember={loadMember} />
 
-          {!data.poll?.memberVote?.option && (
-            <>
-              <div className="poll-options">
-                {data.poll.options.map((price) => (
-                  <button
-                    key={price}
-                    className={`poll-btn ${
-                      selectedPrice === price ? "selected" : ""
-                    }`}
-                    onClick={() => setSelectedPrice(price)}>
-                    {price} €
-                  </button>
-                ))}
-              </div>
-              <label>
-                Other:{" "}
-                <input
-                  type="number"
-                  min={1}
-                  value={typeof selectedPrice === "string" ? selectedPrice : ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    val > 0 ? setSelectedPrice(val) : setSelectedPrice(null);
-                  }}
-                />{" "}
-                €
-              </label>
-              <button
-                className="poll-btn-confirm"
-                disabled={selectedPrice === null}
-                onClick={() => vote(selectedPrice)}>
-                Confirm {!selectedPrice ? null : selectedPrice + "€"}
-              </button>
-            </>
-          )}
+        <FriendsWishlist data={data} />
 
-          {!data.poll?.finalPrice && data.poll?.memberVote?.option && (
-            <div className="vote-feedback">
-              <p className="feedback-success">
-                🎉 Thank you! Your vote has been registered.
-              </p>
-              <div className="feedback-waiting-container">
-                <span>⏳</span>
+        <Chat data={data} chatBox={chatBox} loadMember={loadMember} />
 
-                <p className="feedback-waiting">
-                  Waiting for everyone to finish voting…
-                </p>
-              </div>
-              <div>
-                {data.notVoted?.length > 0 && data.notVoted?.length <= 3 && (
-                  <>
-                    <ul className="not-voted-list">
-                      <small className="not-voted-info">
-                        <strong>Members who haven't voted yet:</strong>
-                      </small>
-
-                      {data.notVoted?.map((m) => (
-                        <li key={m.id}>{capitalizeFirstLetter(m.name)}</li>
-                      ))}
-                    </ul>
-                    <button
-                      className="share-whatsapp"
-                      type="button"
-                      onClick={handleWhatsAppShare}
-                      aria-label="Share on WhatsApp"
-                      title="Share via Whatsapp">
-                      <WhatsappIcon size={24} round />
-                      Send reminder
-                    </button>
-                  </>
-                )}
-              </div>
-
-              <p className="feedback-info">
-                The final gift price will appear here as soon as all members
-                have voted.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* WISHLIST */}
-        <div className="wishlist-container">
-          <section className="card">
-            <h3 className="card-title">
-              <Gift size={20} /> My Wishlist
-            </h3>
-
-            <ul className="wishlist">
-              {data.member?.wishlist?.length === 0 && (
-                <p className="none">No items yet.</p>
-              )}
-
-              {data.member?.wishlist.map((w) => (
-                <li key={w.id}>{w.text}</li>
-              ))}
-            </ul>
-            {data.member?.wishlist?.length < 3 && (
-              <div className="gift-info">
-                <small>*You can choose up to 3 gift ideas.</small>
-                <small>
-                  *Think wisely, once added, there is no way to remove it!
-                </small>
-
-                <div className="wishlist-input">
-                  <input
-                    type="text"
-                    placeholder="Gift idea…"
-                    value={wishlistItem}
-                    onChange={(e) => setWishlistItem(e.target.value)}
-                  />
-
-                  <button className="btn btn-green" onClick={addWishlist}>
-                    Add
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
-          <section className="card">
-            <h3 className="card-title">
-              <HandHeart size={20} />
-              Friend's Wishlist
-            </h3>
-            {secretWishList >= 0 && (
-              <>
-                <small className="gift-info">
-                  Your secret friends wishlist will be shown here once the gift
-                  price vote is finished.
-                </small>
-                <small className="gift-info">
-                  *Of course if they added any gift ideas!
-                </small>
-              </>
-            )}
-            <ul className="wishlist">
-              {secretWishList.map((el) => {
-                return data.poll?.allVoted && <li key={el.id}>{el.text}</li>;
-              })}
-            </ul>
-          </section>
-        </div>
-
-        {/* CHAT */}
-        <section className="card">
-          <h3 className="card-title">
-            <MessageSquare size={20} /> Public Chat
-          </h3>
-
-          <div className="chat-box" ref={chatBox}>
-            {data.messages?.length === 0 ? (
-              <p className="none">No messages yet.</p>
-            ) : (
-              data.messages.map((msg, i) => (
-                <small className="chat-msg" key={i}>
-                  <small>
-                    <strong>{msg.nickname}: &nbsp;</strong>
-                  </small>{" "}
-                  {msg.text}
-                </small>
-              ))
-            )}
-          </div>
-
-          <div className="chat-input">
-            <input
-              type="text"
-              placeholder="Type message…"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-            />
-            <button className="btn btn-gold" onClick={sendMsg}>
-              <SendHorizonal size={20} />
-            </button>
-          </div>
-        </section>
-
-        {/* REVEAL */}
-        <section className="card reveal-card">
-          <h3 className="card-title">🎁 Your Secret Friend</h3>
-
-          {!open && (
-            <button
-              className="btn btn-primary reveal-btn"
-              disabled={!canReveal}
-              onClick={() => {
-                setOpen(true);
-                launchFireworks();
-              }}>
-              {!canReveal ? (
-                <div className="btn-reveal-container">
-                  <Lock size={18} />
-                  <span>Waiting for everyone to vote…</span>
-                </div>
-              ) : (
-                <div className="reveal-btn-cnt">
-                  <Unlock size={18} />
-                  <span>Reveal!</span>
-                </div>
-              )}
-            </button>
-          )}
-
-          {open && (
-            <p className="reveal-result animate-reveal">
-              🎉 You got: &nbsp;
-              <strong>{capitalizeFirstLetter(data.toName)}</strong>
-            </p>
-          )}
-        </section>
+        <Reveal data={data} />
       </div>
       <Footer />
     </div>

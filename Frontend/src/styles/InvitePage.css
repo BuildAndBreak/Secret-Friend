@@ -29,230 +29,6 @@
   font-size: var(--font-md);
 }
 
-/* MEMBERS */
-.invite-container .members-list {
-  font-size: var(--font-sm);
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-rows: auto;
-  grid-template-rows: repeat(5, auto);
-  padding-left: 1rem;
-}
-
-.invite-container .members-list li {
-  padding: var(--space-xxs) 0;
-}
-
-/* POLL */
-.invite-container .poll-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  gap: var(--space-xs);
-}
-
-.invite-container .poll-btn {
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-white);
-  border: 2px solid var(--color-green);
-  border-radius: var(--space-xs);
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.invite-container .poll-btn:hover {
-  background-color: var(--color-green);
-  color: var(--color-white);
-}
-
-.invite-container .poll-btn.selected {
-  background: var(--color-green);
-  color: var(--color-white);
-}
-
-.invite-container input {
-  width: 5rem;
-  border: 2px solid var(--color-green);
-  border-radius: var(--space-xs);
-}
-
-.invite-container .poll-btn-confirm:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.invite-container .poll-btn-confirm {
-  margin-top: var(--space-md);
-  padding: var(--space-xxs);
-  border-radius: var(--space-md);
-  border: none;
-  background-color: var(--color-red);
-  color: var(--color-white);
-  font-size: var(--font-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.invite-container .poll-btn-confirm:hover {
-  background-color: var(--color-btn-primary-hover);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-}
-
-.invite-container .waiting-text {
-  color: var(--color-red);
-  font-weight: 500;
-}
-
-.invite-container .final-price {
-  color: var(--color-dark-gray);
-  font-weight: 600;
-}
-
-.invite-container .vote-feedback {
-  background: var(--color-light-gray);
-  border-radius: 12px;
-  margin-top: var(--space-md);
-  animation: fadeIn 0.4s ease;
-}
-
-.invite-container .feedback-success {
-  font-size: var(--font-sm);
-  font-weight: 600;
-  color: var(--color-green);
-  margin-bottom: var(--space-xs);
-}
-
-.invite-container .feedback-waiting-container {
-  display: flex;
-}
-
-.invite-container .feedback-waiting {
-  font-size: var(--font-sm);
-  color: var(--color-dark-gray);
-  font-style: italic;
-  margin-bottom: var(--space-md);
-}
-
-.invite-container .feedback-info {
-  font-size: var(--font-xs);
-  color: var(--color-gray);
-  margin-top: var(--space-md);
-}
-
-.invite-container .not-voted-list {
-  font-size: var(--font-sm);
-}
-
-.invite-container .share-whatsapp {
-  border: 2px solid #25d366;
-  border-radius: var(--space-sm);
-  padding: var(--space-xxs) var(--space-sm);
-  display: flex;
-  align-items: center;
-  margin-top: var(--space-sm);
-  gap: var(--space-xxs);
-  background: none;
-  cursor: pointer;
-}
-
-.invite-container .not-voted-info {
-  font-size: var(--font-sm);
-  font-weight: 400;
-}
-
-.invite-container .not-voted-list li {
-  list-style: none;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* WISHLIST */
-
-.invite-container .wishlist-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-}
-
-.invite-container .wishlist li {
-  list-style: none;
-  padding-bottom: var(--space-sm);
-  gap: var(--space-xxs);
-  display: flex;
-  align-items: center;
-}
-
-.invite-container ul li::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background-image: url("/assets/images/gold-star-li.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.invite-container .wishlist-input {
-  display: flex;
-  margin-top: var(--space-sm);
-  gap: var(--space-xs);
-}
-
-.invite-container .wishlist-input input {
-  flex: 1;
-  padding: var(--space-xs);
-  border: 2px solid var(--color-green);
-  border-radius: var(--space-xs);
-}
-
-.invite-container .gift-info {
-  display: flex;
-  flex-direction: column;
-  color: var(--color-dark-gray);
-  font-weight: 300;
-}
-
-.invite-container .none {
-  opacity: 0.6;
-}
-
-/* CHAT */
-.invite-container .chat-box {
-  height: 180px;
-  overflow-y: auto;
-  background: #fefefe;
-  border: 1px solid #ddd;
-  border-radius: var(--space-xs);
-  padding: var(--space-xs);
-}
-
-.invite-container .chat-msg {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-xxs) 0;
-}
-
-.invite-container .chat-input {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.invite-container .chat-input input {
-  flex: 1;
-  border: 2px solid var(--color-green);
-  border-radius: var(--space-xs);
-  padding: var(--space-xs);
-}
-
 /* BUTTONS */
 .invite-container .btn {
   cursor: pointer;
@@ -274,7 +50,8 @@
 }
 
 .invite-container .btn-gold {
-  background: var(--color-gold);
+  background: var(--color-btn-gold);
+  color: black;
   display: flex;
   align-items: center;
   border: none;
@@ -286,54 +63,13 @@
   border: none;
 }
 
+.invite-container .btn-green:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .invite-container .btn:hover:not(:disabled) {
   opacity: 0.85;
-}
-
-/* REVEAL */
-.invite-container .reveal-card {
-  text-align: center;
-}
-
-.invite-container .btn-reveal-container {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-xxs);
-}
-
-.invite-container .reveal-result {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: var(--space-sm);
-  font-size: var(--font-lg);
-  color: var(--color-dark-gray);
-  opacity: 0;
-}
-
-.animate-reveal {
-  animation: revealPop 0.7s ease-out forwards;
-}
-
-@keyframes revealPop {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.95);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(0px) scale(1.03);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.invite-container .reveal-btn-cnt {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-xxs);
 }
 
 /* LOADING */
@@ -355,13 +91,6 @@
   font-size: var(--font-lg);
 }
 
-/* ERROR */
-.invite-container .error-text {
-  color: var(--color-red);
-  text-align: center;
-  margin-top: 2rem;
-}
-
 @media (min-width: 900px) {
   .invite-container {
     max-width: 950px;
@@ -374,7 +103,6 @@
   }
 
   .invite-container h2 {
-    font-size: var(--font-xl);
     grid-column: span 2;
   }
 
@@ -384,8 +112,7 @@
     align-items: center;
   }
 
-  .invite-container .chat-msg {
-    flex-direction: row;
-    align-items: center;
+  .chat-card {
+    grid-column: span 2;
   }
 }
