@@ -72,7 +72,7 @@ export default function Wishlist({ data, loadMember }) {
             />
             <button
               className="btn btn-green"
-              disabled={canReveal}
+              disabled={!canReveal}
               onClick={addWishlist}>
               Add
             </button>
