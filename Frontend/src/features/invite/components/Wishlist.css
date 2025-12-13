@@ -23,7 +23,8 @@
 }
 
 .wishlist-card .wishlist-input input {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: var(--space-xs);
   border: 2px solid var(--color-green);
   border-radius: var(--space-xs);
