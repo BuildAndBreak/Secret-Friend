@@ -104,10 +104,10 @@ router.get("/:code/verify", async (req, res) => {
   draw.organizerVerifiedAt = new Date();
 
   // send member invites
-  const base = process.env.FRONTEND_URL?.replace(/\/$/, "");
   for (const m of draw.members) {
     if (!m.email || !m.inviteToken) continue;
-    const url = `${base}/i/${m.inviteToken}`;
+
+    const url = `${process.env.FRONTEND_URL}/i/${m.inviteToken}`;
     const emailToOrganizer =
       m.email === draw.email && m.name === draw.organizer;
 
@@ -251,6 +251,17 @@ router.post("/:code/poll/vote", async (req, res) => {
     draw.giftPoll.lockedAt = new Date();
 
     await draw.save();
+
+    for (const m of draw.members) {
+      if (!m.email || !m.inviteToken) continue;
+      const url = `${process.env.FRONTEND_URL}/i/${m.inviteToken}`;
+
+      await sendMail({
+        to: m.email,
+        subject: "Time to see who your Secret Santa is 🎅",
+        html: pairsReadyEmail({ m, url }),
+      });
+    }
 
     res.json({ ok: true, allVoted: true, finalPrice });
   } catch (err) {

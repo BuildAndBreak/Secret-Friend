@@ -1,5 +1,7 @@
 import express from "express";
 import Draw from "../models/Draw.js";
+import { sendMail } from "../utils/mailer.js";
+import { chatEmail } from "../utils/template.js";
 
 const router = express.Router();
 
@@ -28,6 +30,23 @@ router.post("/:code", async (req, res) => {
     });
 
     await draw.save();
+
+    const mailTo = draw.members.filter((m) => m.id !== memberId).map((m) => m);
+
+    for (const m of mailTo) {
+      if (!m.email || !m.inviteToken) continue;
+      const url = `${process.env.FRONTEND_URL}/i/${m.inviteToken}`;
+
+      await sendMail({
+        to: m.email,
+        subject: `New message in Secret Santa chat`,
+        html: chatEmail({
+          m,
+          nickname: sender.nickname,
+          url,
+        }),
+      });
+    }
 
     res.status(201).json({ ok: true });
   } catch (err) {

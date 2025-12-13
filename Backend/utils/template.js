@@ -3,8 +3,6 @@ import { capitalizeFirstLetter } from "./capitalize.js";
 const year = new Date().getFullYear();
 
 export function verifyEmail({ draw, verifyUrl }) {
-  const year = new Date().getFullYear();
-
   return `
 <table width="100%" style="background:#f7f7f7;padding:30px 0;font-family:Arial,sans-serif;">
 <tr><td align="center">
@@ -44,8 +42,6 @@ export function verifyEmail({ draw, verifyUrl }) {
 }
 
 export function organizerEmail({ draw, url }) {
-  const year = new Date().getFullYear();
-
   return `
 <table width="100%" style="background:#fafafa;padding:30px 0;font-family:Arial,sans-serif;">
 <tr><td align="center">
@@ -94,8 +90,6 @@ export function organizerEmail({ draw, url }) {
 }
 
 export function membersEmail({ m, draw, url }) {
-  const year = new Date().getFullYear();
-
   return `
 <table width="100%" style="background:#fafafa;padding:30px 0;font-family:Arial,sans-serif;">
 <tr><td align="center">
@@ -134,6 +128,82 @@ export function membersEmail({ m, draw, url }) {
     <li>The gift value poll</li>
     <li>The group chat</li>
   </ul>
+</td></tr>
+
+<tr><td align="center" style="padding-top:25px;font-size:12px;color:#999;">
+  Secret Santa App © ${year}
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+`;
+}
+
+export function chatEmail({ m, nickname, url }) {
+  return `
+<table width="100%" style="background:#fafafa;padding:30px 0;font-family:Arial,sans-serif;">
+<tr><td align="center">
+<table width="600" style="background:#fff;border-radius:8px;padding:25px;">
+
+<tr><td align="center" style="padding-bottom:10px;">
+  <h2 style="color:#27ae60;margin:0;font-size:22px;">New Chat Message 💬</h2>
+</td></tr>
+
+<tr><td style="font-size:15px;color:#333;padding-top:10px;">
+  Hello <strong>${capitalizeFirstLetter(m.name)}</strong>,
+</td></tr>
+
+<tr><td style="font-size:15px;color:#333;padding:10px 0;">
+  <strong>${nickname}</strong> sent a new message in the Secret Santa chat.
+</td></tr>
+
+<tr><td align="center" style="padding:20px 0;">
+  <a href="${url}" 
+     style="background:#27ae60;color:#fff;padding:12px 22px;text-decoration:none;
+     border-radius:6px;font-size:15px;font-weight:bold;display:inline-block;">
+     Open Chat
+  </a>
+</td></tr>
+
+<tr><td align="center" style="padding-top:25px;font-size:12px;color:#999;">
+  Secret Santa App © ${year}
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+`;
+}
+
+export function pairsReadyEmail({ m, url }) {
+  return `
+<table width="100%" style="background:#fafafa;padding:30px 0;font-family:Arial,sans-serif;">
+<tr><td align="center">
+<table width="600" style="background:#fff;border-radius:8px;padding:25px;">
+
+<tr><td align="center" style="padding-bottom:10px;">
+  <h2 style="color:#27ae60;margin:0;font-size:22px;">Secret Santa Pairs Ready 🎁</h2>
+</td></tr>
+
+<tr><td style="font-size:15px;color:#333;padding-top:10px;">
+  Hello <strong>${capitalizeFirstLetter(m.name)}</strong>,
+</td></tr>
+
+<tr><td style="font-size:15px;color:#333;padding:10px 0;">
+  All members have now voted, and your Secret Santa draw is complete.
+</td></tr>
+
+<tr><td style="font-size:15px;color:#333;padding:5px 0 15px;">
+  Click the button below to access your group and see who your Secret Santa friend is!
+</td></tr>
+
+<tr><td align="center" style="padding:20px 0;">
+  <a href="${url}" 
+     style="background:#27ae60;color:#fff;padding:12px 22px;text-decoration:none;
+     border-radius:6px;font-size:15px;font-weight:bold;display:inline-block;">
+     View Your Secret Santa
+  </a>
 </td></tr>
 
 <tr><td align="center" style="padding-top:25px;font-size:12px;color:#999;">
