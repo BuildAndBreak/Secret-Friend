@@ -6,6 +6,7 @@ import {
   verifyEmail,
   membersEmail,
   organizerEmail,
+  pairsReadyEmail,
 } from "../utils/template.js";
 
 const router = express.Router();
