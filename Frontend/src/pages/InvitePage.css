@@ -13,7 +13,6 @@
 /* CARD */
 .invite-container .card {
   width: 100%;
-  height: 100%;
   background: var(--color-light-gray);
   border-radius: var(--space-sm);
   padding: var(--space-md);
@@ -102,6 +101,7 @@
 
   .invite-container .card {
     padding: var(--space-lg);
+    height: 100%;
   }
 
   .invite-container h2 {
