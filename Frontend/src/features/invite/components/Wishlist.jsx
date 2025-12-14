@@ -55,17 +55,15 @@ export default function Wishlist({ data, loadMember }) {
             Think wisely, once added, there is no way to remove your wish!
           </small>
           <div className="wishlist-input">
-            <label>
-              <input
-                type="text"
-                maxLength={40}
-                placeholder={`Your wish... (${
-                  3 - data?.member?.wishlist?.length
-                } left)`}
-                value={wishlistItem}
-                onChange={(e) => setWishlistItem(e.target.value)}
-              />
-            </label>
+            <input
+              type="text"
+              maxLength={40}
+              placeholder={`Your wish... (${
+                3 - data?.member?.wishlist?.length
+              } left)`}
+              value={wishlistItem}
+              onChange={(e) => setWishlistItem(e.target.value)}
+            />
             <button
               className="btn btn-green"
               disabled={!canReveal}
