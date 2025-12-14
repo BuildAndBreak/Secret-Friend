@@ -56,16 +56,16 @@ After all members have voted, each participant can:
 
 ### Features
 
--Create a Secret Santa group with email verification
--Invite participants using secure tokens
--Optional organizer participation
--Exclusion rules (with validation to prevent impossible draws)
--Gift budget voting
--Public group chat
--Personal wishlist (up to 3 items per member)
--Final Secret Santa reveal
--Responsive layout (mobile-first)
--Accessibility-focused HTML and form semantics
+- Create a Secret Santa group with email verification
+- Invite participants using secure tokens
+- Optional organizer participation
+- Exclusion rules (with validation to prevent impossible draws)
+- Gift budget voting
+- Public group chat
+- Personal wishlist (up to 3 items per member)
+- Final Secret Santa reveal
+- Responsive layout (mobile-first)
+- Accessibility-focused HTML and form semantics
 
 ### Built with
 
