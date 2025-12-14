@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Copy, Share2 } from "lucide-react";
-import "../styles/ActiveGroup.css";
+import "./ActiveGroup.css";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { API } from "../api/draws";
+import { API } from "../../../api/draws";
 
 export default function ActiveGroup({ includeOrganizer, groupCode }) {
   const [organizerInviteToken, setOrganizerInviteToken] = useState(null);

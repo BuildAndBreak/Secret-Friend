@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../styles/Form.css";
+import "./Form.css";
 import { CircleAlert, ChevronLeft } from "lucide-react";
 import FormStep2 from "./FormStep2";
 import FormStep3 from "./FormStep3";
@@ -63,15 +63,15 @@ export default function Form({ draftData, setCreate, setDraftData }) {
     <>
       {/* FORM PART 1*/}
       {step === 1 && (
-        <div className="container step-1 ">
+        <form className="container step-1" onSubmit={Continue} noValidate>
           <div className="form-header">
             <button
               type="button"
-              aria-label="Back"
+              aria-label="Back to homepage"
               className="icon-button"
-              title="Go to Homepage"
+              title="Back to Homepage"
               onClick={() => setCreate(false)}>
-              <ChevronLeft size={28} />
+              <ChevronLeft size={28} aria-hidden="true" />
             </button>
             <h2>Organizer</h2>
           </div>
@@ -79,6 +79,7 @@ export default function Form({ draftData, setCreate, setDraftData }) {
           <label htmlFor="name">What's your name?</label>
           <input
             id="name"
+            name="name"
             type="text"
             value={nameOrganizer}
             onChange={(e) => {
@@ -89,8 +90,9 @@ export default function Form({ draftData, setCreate, setDraftData }) {
           />
 
           {error.name && (
-            <span className="error-container">
-              <CircleAlert size={16} /> <small>{error.name}</small>
+            <span className="error-container" role="alert">
+              <CircleAlert size={16} aria-hidden="true" />
+              <small>{error.name}</small>
             </span>
           )}
 
@@ -106,6 +108,7 @@ export default function Form({ draftData, setCreate, setDraftData }) {
           <label htmlFor="email">Email:</label>
           <input
             id="email"
+            name="email"
             type="email"
             value={email}
             onChange={(e) => {
@@ -116,15 +119,14 @@ export default function Form({ draftData, setCreate, setDraftData }) {
           />
 
           {error.email && (
-            <span className="error-container">
-              <CircleAlert size={16} /> <small>{error.email}</small>
+            <span className="error-container" role="alert">
+              <CircleAlert size={16} aria-hidden="true" />
+              <small>{error.email}</small>
             </span>
           )}
 
-          <button type="submit" onClick={(e) => Continue(e)}>
-            Continue...
-          </button>
-        </div>
+          <button type="submit">Continue...</button>
+        </form>
       )}
 
       {/* FORM PART 2*/}

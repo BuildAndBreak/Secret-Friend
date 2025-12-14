@@ -1,0 +1,21 @@
+header {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 130px;
+}
+
+header h1 {
+  color: var(--color-white);
+  font-family: var(--font-title);
+  font-size: 4rem;
+}
+
+header img {
+  position: absolute;
+  top: 50%;
+  right: 70px;
+  transform: translateY(-55%);
+  z-index: -1;
+}

@@ -1,7 +1,7 @@
 import { ChevronLeft, CircleX, CircleAlert } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useState } from "react";
-import "../styles/FormStep2.css";
+import "./FormStep2.css";
 
 export default function FormStep2({
   step,
@@ -149,7 +149,7 @@ export default function FormStep2({
       <div className="form-header">
         <button
           type="button"
-          aria-label="Back"
+          aria-label="Back to organizer step"
           className="icon-button"
           onClick={() => {
             setStep(1);
@@ -200,7 +200,8 @@ export default function FormStep2({
                   value={member.name}
                   onChange={(e) => onChangeMember(e, member.id)}
                   required
-                  aria-invalid={!!error.members}
+                  aria-invalid={submitted && !member.name.trim()}
+                  aria-describedby={error.members ? "members-error" : undefined}
                 />
               </div>
 
@@ -211,7 +212,7 @@ export default function FormStep2({
                 value={member.email}
                 onChange={(e) => onChangeEmail(e, member.id)}
                 required
-                aria-invalid={!!error.emails}
+                aria-invalid={submitted && !member.email.trim()}
                 aria-describedby={error.emails ? "emails-error" : undefined}
               />
             </div>
@@ -221,20 +222,20 @@ export default function FormStep2({
 
       <div aria-live="polite" className="errors">
         {error.members && (
-          <span className="error-container" id="members-error">
-            <CircleAlert /> <small>{error.members}</small>
+          <span className="error-container" id="members-error" role="alert">
+            <CircleAlert aria-hidden="true" /> <small>{error.members}</small>
           </span>
         )}
 
         {error.numMembers && (
-          <span className="error-container" id="num-error">
-            <CircleAlert /> <small>{error.numMembers}</small>
+          <span className="error-container" id="num-error" role="alert">
+            <CircleAlert aria-hidden="true" /> <small>{error.numMembers}</small>
           </span>
         )}
 
         {error.emails && (
-          <span className="error-container" id="emails-error">
-            <CircleAlert /> <small>{error.emails}</small>
+          <span className="error-container" id="emails-error" role="alert">
+            <CircleAlert aria-hidden="true" /> <small>{error.emails}</small>
           </span>
         )}
       </div>

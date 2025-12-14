@@ -35,12 +35,12 @@ export default function Chat({ data, chatBox, loadMember }) {
           <p className="none">No messages yet.</p>
         ) : (
           data.messages.map((msg, i) => (
-            <small className="chat-msg" key={i}>
-              <small className="chat-sender">
+            <ul className="chat-msg" key={i}>
+              <li className="chat-sender">
                 <strong>{msg.nickname}:</strong>
-              </small>
+              </li>
               {msg.text}
-            </small>
+            </ul>
           ))
         )}
       </div>
@@ -52,7 +52,10 @@ export default function Chat({ data, chatBox, loadMember }) {
           value={chatInput}
           onChange={(e) => setChatInput(e.target.value)}
         />
-        <button className="btn btn-gold" onClick={sendMsg}>
+        <button
+          className="btn btn-gold"
+          aria-label="Send message"
+          onClick={sendMsg}>
           <SendHorizonal size={20} />
         </button>
       </div>

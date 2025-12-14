@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { API } from "../api/draws";
+import { API } from "../../../api/draws";
 import { CircleAlert, CheckCircle2 } from "lucide-react";
-import "../styles/VerifyPending.css";
+import "./VerifyPending.css";
 import { ClipLoader } from "react-spinners";
 import ActiveGroup from "./ActiveGroup";
 

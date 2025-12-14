@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { API } from "../api/draws";
-import "../styles/VerifyPage.css";
+import "./VerifyPage.css";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
@@ -69,11 +69,13 @@ export default function VerifyPage() {
 
   return (
     <div className="App">
-      <main className="">
+      <main>
         <Header />
         <div className="container verify-card">
-          <h1>Group Verification</h1>
-          <p className="verify-status">{status}</p>
+          <h2>Group Verification</h2>
+          <p className="verify-status" role="status" aria-live="polite">
+            {status}
+          </p>
 
           {isDone && (
             <p className="verify-hint">

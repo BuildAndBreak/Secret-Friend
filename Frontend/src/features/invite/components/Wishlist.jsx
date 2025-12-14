@@ -10,10 +10,7 @@ export default function Wishlist({ data, loadMember }) {
   async function addWishlist() {
     if (!wishlistItem.trim()) return;
 
-    if (wishlistItem.length > 40) {
-      alert("Wishlist item cannot exceed 40 characters.");
-      return;
-    }
+    if (wishlistItem.length > 40) return;
 
     if (data?.member?.wishlist?.length >= 3) {
       setWishlistItem("");
@@ -38,7 +35,7 @@ export default function Wishlist({ data, loadMember }) {
   return (
     <section className="card wishlist-card">
       <h3 className="card-title">
-        <Gift size={20} /> My Wishlist
+        <Gift aria-hidden="true" size={20} /> My Wishlist
       </h3>
 
       <ul className="wishlist">
@@ -52,22 +49,23 @@ export default function Wishlist({ data, loadMember }) {
       {data?.member?.wishlist?.length < 3 && (
         <div className="gift-info">
           <small className="info-text">
-            Once all members voted, click <strong>'Add'</strong> to include your
-            wish to the wishlist.
+            You can add wishes after all members vote.
           </small>
           <small className="info-text">
             Think wisely, once added, there is no way to remove your wish!
           </small>
           <div className="wishlist-input">
-            <input
-              type="text"
-              maxLength={40}
-              placeholder={`Your wish... (${
-                3 - data?.member?.wishlist?.length
-              } left)`}
-              value={wishlistItem}
-              onChange={(e) => setWishlistItem(e.target.value)}
-            />
+            <label>
+              <input
+                type="text"
+                maxLength={40}
+                placeholder={`Your wish... (${
+                  3 - data?.member?.wishlist?.length
+                } left)`}
+                value={wishlistItem}
+                onChange={(e) => setWishlistItem(e.target.value)}
+              />
+            </label>
             <button
               className="btn btn-green"
               disabled={!canReveal}

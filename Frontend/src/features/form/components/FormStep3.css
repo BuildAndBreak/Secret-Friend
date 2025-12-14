@@ -94,9 +94,14 @@
   padding: var(--space-xxs);
 }
 
+.step-3 .dropdown-btn {
+  background: none;
+  border: none;
+}
+
 .step-3 .list-members-container svg:hover,
 svg:active {
-  stroke: var(--color-text-secondary);
+  stroke: var(--color-white);
   background-color: var(--color-red);
   transition: 400ms;
 }

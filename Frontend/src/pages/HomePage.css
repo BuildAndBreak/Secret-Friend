@@ -15,10 +15,6 @@
   border-radius: var(--space-md);
 }
 
-.homepage h2 {
-  padding-top: var(--space-md);
-}
-
 .homepage .intro-text {
   flex: 1;
   display: flex;
@@ -62,7 +58,7 @@
   margin-right: 5px;
 }
 
-.homepage button {
+.homepage .btn {
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--space-xs);
   border: none;
@@ -75,7 +71,7 @@
   transition: 0.3s;
 }
 
-.homepage button:hover {
+.homepage .btn:hover {
   background-color: var(--color-btn-primary-hover);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }

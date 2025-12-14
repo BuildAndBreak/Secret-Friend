@@ -1,12 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronDown, X } from "lucide-react";
-import "../styles/FormStep3.css";
+import "./FormStep3.css";
 import {
   createDraw,
   serializeExclusions,
   deserializeExclusions,
-} from "../api/draws";
-import { API } from "../api/draws";
+} from "../../../api/draws";
+import { API } from "../../../api/draws";
 import { ClipLoader } from "react-spinners";
 
 export default function FormStep3({
@@ -222,7 +222,7 @@ export default function FormStep3({
       <div className="form-header">
         <button
           type="button"
-          aria-label="Back"
+          aria-label="Back to member step"
           className="icon-button"
           onClick={() => {
             setStep(2);
@@ -243,6 +243,8 @@ export default function FormStep3({
         <button
           type="button"
           className="btn-exclusions"
+          aria-expanded={open}
+          aria-controls="exclusions-panel"
           onClick={() => setOpen(!open)}>
           {!open ? "Set exclusions" : "Close list"}
         </button>
@@ -250,18 +252,30 @@ export default function FormStep3({
 
       {/* Organizer as a potential GIVER (if included) */}
       {open && (
-        <div className="scrollbar exclusions-scroll">
+        <div id="exclusions-panel" className="scrollbar exclusions-scroll">
           {includeOrganizer && organizerName && (
             <>
               <div
                 className={`${
                   dropdownMemberId === ORGANIZER ? "open" : ""
                 } list-members-container`}>
-                <span type="button">{organizerName}</span>
+                <span>{organizerName}</span>
                 {dropdownMemberId !== ORGANIZER ? (
-                  <ChevronDown onClick={() => toggleDropdown(ORGANIZER)} />
+                  <button
+                    type="button"
+                    className="dropdown-btn"
+                    aria-label={`Open exclusions for ${organizerName}`}
+                    onClick={() => toggleDropdown(ORGANIZER)}>
+                    <ChevronDown aria-hidden="true" />
+                  </button>
                 ) : (
-                  <X onClick={() => toggleDropdown(null)} />
+                  <button
+                    type="button"
+                    className="dropdown-btn"
+                    onClick={() => toggleDropdown(null)}
+                    aria-label={`Close exclusions for ${organizerName}`}>
+                    <X aria-hidden="true" />
+                  </button>
                 )}
               </div>
 
@@ -269,7 +283,7 @@ export default function FormStep3({
                 <div className="exclusions-dropdown">
                   {members.map((m) => {
                     // every member is a possible receiver
-                    const checked = isExcluded(ORGANIZER, m.id); // is organizer→member currently excluded?
+                    const checked = isExcluded(ORGANIZER, m.id); // is organizer member currently excluded?
                     const disabled =
                       !checked && wouldBreakIfAdd(ORGANIZER, m.id); // prevent impossible configuration
                     return (
@@ -295,11 +309,23 @@ export default function FormStep3({
             return (
               <div key={member.id}>
                 <div className={`${open ? "open" : ""} list-members-container`}>
-                  <span type="button">{member.name}</span>
+                  <span>{member.name}</span>
                   {!open ? (
-                    <ChevronDown onClick={() => toggleDropdown(member.id)} /> // open their exclusion list
+                    <button
+                      type="button"
+                      className="dropdown-btn"
+                      aria-label={`Open exclusions for ${member.name}`}
+                      onClick={() => toggleDropdown(member.id)}>
+                      <ChevronDown aria-hidden="true" />
+                    </button>
                   ) : (
-                    <X onClick={() => toggleDropdown(null)} /> // close it
+                    <button
+                      type="button"
+                      className="dropdown-btn"
+                      onClick={() => toggleDropdown(null)}
+                      aria-label={`Close exclusions for ${member.name}`}>
+                      <X aria-hidden="true" />
+                    </button>
                   )}
                 </div>
 
@@ -358,7 +384,7 @@ export default function FormStep3({
         </div>
       )}
 
-      <button className="submit-btn" type="submit">
+      <button className="submit-btn" type="submit" disabled={loading}>
         Create Secret Santa{" "}
         {loading && (
           <ClipLoader size={30} color={"var(--color-white)"} loading />

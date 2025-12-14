@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import "../styles/NotFound.css";
+import "./NotFoundPage.css";
 
 export default function NotFoundPage() {
   return (
-    <div className="notfound-container">
+    <main className="notfound-container">
       <div className="notfound-card">
         <h1>404</h1>
         <p>Oops... this invite link doesn't exist or has expired.</p>
@@ -12,6 +12,6 @@ export default function NotFoundPage() {
           Go back home
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

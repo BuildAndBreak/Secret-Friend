@@ -4,7 +4,7 @@ import { RingLoader } from "react-spinners";
 import { API } from "../api/draws";
 import { capitalizeFirstLetter } from "../utils/capitalize";
 import { useNavigate } from "react-router-dom";
-import "../styles/InvitePage.css";
+import "./InvitePage.css";
 
 import Header from "../components/Header";
 import Members from "../features/invite/components/Members";
@@ -57,15 +57,19 @@ export default function InvitePage() {
     loadMember();
   }, [loadMember]);
 
-  // Poll every 3 seconds
+  // Poll every 5 seconds
   useEffect(() => {
-    const id = setInterval(loadMember, 3000);
+    const id = setInterval(loadMember, 5000);
     return () => clearInterval(id);
   }, [loadMember]);
 
   if (loading)
     return (
-      <div className="loader-center">
+      <div
+        className="loader-center"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true">
         <RingLoader size={100} color="var(--color-red)" />
         <p className="loading-message">Loading your Secret Santa page</p>
         <p>This can take a while if the server is waking up… </p>
@@ -77,7 +81,7 @@ export default function InvitePage() {
       <header>
         <Header />
       </header>
-      <div className="container invite-container">
+      <main className="container invite-container">
         <h2>🎅 Welcome, {capitalizeFirstLetter(data.member?.name)}!</h2>
 
         <Members data={data} />
@@ -91,7 +95,7 @@ export default function InvitePage() {
         <Chat data={data} chatBox={chatBox} loadMember={loadMember} />
 
         <Reveal data={data} />
-      </div>
+      </main>
       <Footer />
     </div>
   );

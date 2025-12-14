@@ -1,7 +1,7 @@
-import Form from "../components/Form.jsx";
+import Form from "../features/form/components/Form.jsx";
 import Footer from "../components/Footer.jsx";
 import { useState, useEffect } from "react";
-import "../styles/HomePage.css";
+import "./HomePage.css";
 import Header from "../components/Header.jsx";
 import Popup from "../components/Popup.jsx";
 
@@ -12,10 +12,10 @@ export default function HomePage() {
 
   useEffect(() => {
     const draft = localStorage.getItem("secret-santa-draft");
-    if (draft) {
-      setShowPopup(true);
-      setDraftData(JSON.parse(draft));
-    }
+    if (!draft) return;
+
+    setShowPopup(true);
+    setDraftData(JSON.parse(draft));
   }, []);
 
   function recoverDraft() {
@@ -37,6 +37,7 @@ export default function HomePage() {
 
       <main>
         <Header />
+
         {!create && (
           <section>
             <picture>
@@ -52,7 +53,7 @@ export default function HomePage() {
 
               <img
                 className="santa-img"
-                src="/santaclaus-laptop.png"
+                src="assets/images/santaclaus-laptop.png"
                 alt="santa claus with a gift in the hand shushing"
               />
             </picture>
@@ -76,7 +77,12 @@ export default function HomePage() {
                 <li>Join the group chat</li>
                 <li>See who they’ll be gifting</li>
               </ul>
-              <button onClick={() => setCreate(!create)}>Create Group</button>
+              <button
+                className="btn"
+                type="button"
+                onClick={() => setCreate(true)}>
+                Create Group
+              </button>
             </div>
           </section>
         )}

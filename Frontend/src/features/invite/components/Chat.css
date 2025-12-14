@@ -11,8 +11,9 @@
 
 .chat-card .chat-msg {
   display: flex;
+  list-style: none;
   flex-direction: column;
-
+  font-size: var(--font-xs);
   color: var(--color-dark-gray);
   padding-bottom: var(--space-xs);
 }
