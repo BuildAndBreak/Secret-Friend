@@ -7,6 +7,7 @@
 
 h2 {
   font-size: var(--font-lg);
+  padding-top: var(--space-xs);
   color: var(--color-red);
 }
 

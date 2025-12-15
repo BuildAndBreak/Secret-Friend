@@ -26,7 +26,7 @@ export default function FormStep3({
   const ORGANIZER = "organizer";
   const organizerName = (nameOrganizer || "").trim();
 
-  // Save exclusions to LocalStorage on change
+  // save exclusions to LocalStorage on change
   useEffect(() => {
     if (Object.keys(exclusions).length === 0) return;
 
@@ -46,7 +46,7 @@ export default function FormStep3({
     }
   }, [exclusions, setDraftData]);
 
-  // Load exclusions from LocalStorage on mount
+  // load exclusions from LocalStorage on mount
   useEffect(() => {
     const draftExists = localStorage.getItem("secret-santa-draft");
     if (!draftExists) return;
@@ -62,7 +62,7 @@ export default function FormStep3({
     }
   }, []);
 
-  // Memoize so we don't rebuild on every render unless deps change
+  // memoize so we don't rebuild on every render
   const participants = useMemo(() => {
     const ids = [];
     if (includeOrganizer && organizerName) ids.push(ORGANIZER);
@@ -74,43 +74,44 @@ export default function FormStep3({
     setDropdownMemberId((prev) => (prev === id ? null : id));
   }
 
+  // copy each giver's Set so we don't mutate existing state
   const cloneExclusions = (src) => {
     const out = {};
-    for (const k in src) out[k] = new Set(src[k]); // copy each giver's Set so we don't mutate existing state
+    for (const k in src) out[k] = new Set(src[k]);
     return out;
   };
 
-  // Utility to check if a specific directed exclusion exists.
+  // utility to check if a specific directed exclusion exists.
   const isExcluded = (giverId, receiverId) =>
-    !!exclusions[giverId]?.has(receiverId); // true if exclusions[giverId] exists and its Set has receiverId
+    !!exclusions[giverId]?.has(receiverId);
 
   /*
-   * Returns true if there's at least one perfect assignment (permutation) meeting:
-   *  - every participant gives to exactly one distinct receiver,
-   *  - nobody gives to themselves,
-   *  - all directed exclusions (giver -> receiver) are respected.
-   * Simple DFS backtracking;
-   */
+    Returns true if there's at least one perfect assignment meeting:
+     - every participant gives to exactly one distinct receiver,
+     - nobody gives to themselves,
+     - all directed exclusions (giver -> receiver) are respected.
+    Simple DFS backtracking;
+  */
 
   function hasPerfectMatching(participants, exclMap) {
-    const n = participants.length; // number of people
-    const givers = participants.slice(); // copy array for clarity (order matters for DFS)
-    const receivers = participants.slice(); // possible receivers are the same set of ids
+    const n = participants.length;
+    const givers = participants.slice();
+    const receivers = participants.slice();
     const used = new Set(); // Set of receivers already taken in the current partial assignment
 
     function dfs(i) {
       // try to assign giver at index i
-      if (i === n) return true; // base case: assigned all givers successfully
+      if (i === n) return true; // assigned all givers successfully
       const giver = givers[i]; // current giver id
 
       for (const rec of receivers) {
         // iterate over every potential receiver
-        if (rec === giver) continue; // rule: no self-gifts
+        if (rec === giver) continue; // no self-gifts
         if (used.has(rec)) continue; // can't use the same receiver twice
         if (exclMap[giver]?.has(rec)) continue; // respect directed exclusion giver -> rec
 
         used.add(rec); // tentatively assign giver -> rec
-        if (dfs(i + 1)) return true; // if the rest can be assigned, we're done
+        if (dfs(i + 1)) return true; // if the rest can be assigned, done
         used.delete(rec); // backtrack: unassign and try next receiver
       }
       return false; // no valid receiver for this giver under current choices
@@ -119,10 +120,11 @@ export default function FormStep3({
     return dfs(0); // start DFS from the first giver
   }
 
-  /**
-   * Simulate adding a new exclusion (ownerId -> targetId) to the map and test if it
-   * would make a perfect matching impossible. Return true if it WOULD break (so we must refuse).
-   */
+  /*
+    simulate adding the checkbox “owner cannot give to target”
+    check if there is still at least one valid assignment
+    return true if it would break (so disable checkbox)
+  */
 
   const wouldBreakIfAdd = (ownerId, targetId) => {
     const next = cloneExclusions(exclusions); // copy current exclusions immutably
@@ -132,11 +134,11 @@ export default function FormStep3({
     return !hasPerfectMatching(participants, next); // if no perfect matching exists, adding this would break things
   };
 
-  /**
-   * Toggle a single exclusion checkbox for "ownerId gives to targetId".
-   * - If currently ON, remove it.
-   * - If OFF, only add it if feasibility remains true (else show error and refuse).
-   */
+  /*
+    Toggle a single exclusion checkbox for "ownerId gives to targetId".
+    - If currently ON, remove it.
+    - If OFF, only add it if feasibility remains true (else show error and refuse).
+  */
 
   function toggleExclusion(targetId, ownerId) {
     if (!ownerId || !targetId || ownerId === targetId) return; // guard: ignore invalid or self pair
@@ -357,7 +359,7 @@ export default function FormStep3({
 
                     {/* Other members as potential receivers (exclude self) */}
                     {members
-                      .filter((mem) => mem.id !== member.id) // no self-exclusion UI (self-gift is always disallowed)
+                      .filter((mem) => mem.id !== member.id) // no self-exclusion
                       .map((mem) => {
                         const checked = isExcluded(member.id, mem.id); // member -> other-member excluded?
                         const disabled =

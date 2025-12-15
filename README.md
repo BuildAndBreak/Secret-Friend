@@ -52,6 +52,8 @@ After all members have voted, each participant can:
 ### Links
 
 - Live Site URL: [Secret Santa](https://secret-santa-bnb.netlify.app/)
+- Frontend deployed on Netlify
+- Backend deployed on Render
 
 ## My process
 
@@ -111,6 +113,7 @@ While it can be a bit tedious for the organizer to enter all participant emails 
 - Exclusion rules (with validation to prevent impossible draws)
 - Gift budget voting
 - Public group chat
+- Automatic anonymous. fun nicknames generation for chat messages
 - Personal wishlist (up to 3 items per member)
 - Final Secret Santa reveal
 - Responsive layout (mobile-first)
