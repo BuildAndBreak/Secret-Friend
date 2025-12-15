@@ -1,13 +1,15 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronDown, X } from "lucide-react";
 import "./FormStep3.css";
-import {
-  createDraw,
-  serializeExclusions,
-  deserializeExclusions,
-} from "../../../api/draws";
+import { createDraw, serializeExclusions } from "../../../api/draws";
 import { API } from "../../../api/draws";
 import { ClipLoader } from "react-spinners";
+import {
+  cloneExclusions,
+  isExcluded,
+  wouldBreakIfAdd,
+} from "../../../utils/exclusions";
+import { useExclusionsDraft } from "../hooks/useExclusionsDraft";
 
 export default function FormStep3({
   step,
@@ -26,43 +28,9 @@ export default function FormStep3({
   const ORGANIZER = "organizer";
   const organizerName = (nameOrganizer || "").trim();
 
-  // save exclusions to LocalStorage on change
-  useEffect(() => {
-    if (Object.keys(exclusions).length === 0) return;
+  useExclusionsDraft({ exclusions, setExclusions, setDraftData });
 
-    try {
-      const draftExists = localStorage.getItem("secret-santa-draft");
-      if (!draftExists) return;
-
-      const parsedDraft = JSON.parse(draftExists);
-
-      const serialized = serializeExclusions(exclusions);
-      const newDraft = { ...parsedDraft, exclusions: serialized };
-
-      setDraftData(newDraft);
-      localStorage.setItem("secret-santa-draft", JSON.stringify(newDraft));
-    } catch (err) {
-      console.error("Failed to save exclusions to localStorage:", err);
-    }
-  }, [exclusions, setDraftData]);
-
-  // load exclusions from LocalStorage on mount
-  useEffect(() => {
-    const draftExists = localStorage.getItem("secret-santa-draft");
-    if (!draftExists) return;
-
-    try {
-      const parsedDraft = JSON.parse(draftExists);
-
-      if (Array.isArray(parsedDraft.exclusions)) {
-        setExclusions(deserializeExclusions(parsedDraft.exclusions));
-      }
-    } catch (err) {
-      console.error("Failed to load exclusions from draft", err);
-    }
-  }, []);
-
-  // memoize so we don't rebuild on every render
+  // memoize so we only rebuild when inputs change
   const participants = useMemo(() => {
     const ids = [];
     if (includeOrganizer && organizerName) ids.push(ORGANIZER);
@@ -73,66 +41,6 @@ export default function FormStep3({
   function toggleDropdown(id) {
     setDropdownMemberId((prev) => (prev === id ? null : id));
   }
-
-  // copy each giver's Set so we don't mutate existing state
-  const cloneExclusions = (src) => {
-    const out = {};
-    for (const k in src) out[k] = new Set(src[k]);
-    return out;
-  };
-
-  // utility to check if a specific directed exclusion exists.
-  const isExcluded = (giverId, receiverId) =>
-    !!exclusions[giverId]?.has(receiverId);
-
-  /*
-    Returns true if there's at least one perfect assignment meeting:
-     - every participant gives to exactly one distinct receiver,
-     - nobody gives to themselves,
-     - all directed exclusions (giver -> receiver) are respected.
-    Simple DFS backtracking;
-  */
-
-  function hasPerfectMatching(participants, exclMap) {
-    const n = participants.length;
-    const givers = participants.slice();
-    const receivers = participants.slice();
-    const used = new Set(); // Set of receivers already taken in the current partial assignment
-
-    function dfs(i) {
-      // try to assign giver at index i
-      if (i === n) return true; // assigned all givers successfully
-      const giver = givers[i]; // current giver id
-
-      for (const rec of receivers) {
-        // iterate over every potential receiver
-        if (rec === giver) continue; // no self-gifts
-        if (used.has(rec)) continue; // can't use the same receiver twice
-        if (exclMap[giver]?.has(rec)) continue; // respect directed exclusion giver -> rec
-
-        used.add(rec); // tentatively assign giver -> rec
-        if (dfs(i + 1)) return true; // if the rest can be assigned, done
-        used.delete(rec); // backtrack: unassign and try next receiver
-      }
-      return false; // no valid receiver for this giver under current choices
-    }
-
-    return dfs(0); // start DFS from the first giver
-  }
-
-  /*
-    simulate adding the checkbox “owner cannot give to target”
-    check if there is still at least one valid assignment
-    return true if it would break (so disable checkbox)
-  */
-
-  const wouldBreakIfAdd = (ownerId, targetId) => {
-    const next = cloneExclusions(exclusions); // copy current exclusions immutably
-    const A = next[ownerId] || new Set(); // get or create the Set for this giver
-    A.add(targetId); // pretend we add the directed exclusion owner -> target
-    next[ownerId] = A; // write it back into the cloned map
-    return !hasPerfectMatching(participants, next); // if no perfect matching exists, adding this would break things
-  };
 
   /*
     Toggle a single exclusion checkbox for "ownerId gives to targetId".
@@ -157,7 +65,7 @@ export default function FormStep3({
     }
 
     // CASE 2: turning ON → check if this addition preserves feasibility first
-    if (wouldBreakIfAdd(ownerId, targetId)) {
+    if (wouldBreakIfAdd(exclusions, participants, ownerId, targetId)) {
       // would this make a valid draw impossible?
       setError((prev) => ({
         ...prev,
@@ -172,11 +80,10 @@ export default function FormStep3({
     setExclusions(next); // commit state
   }
 
-  // Submission
   async function submitData(e) {
     e?.preventDefault();
     setLoading(true);
-    // payload the backend expects
+    // payload backend
     const payload = {
       organizer: organizerName,
       email,
@@ -194,23 +101,20 @@ export default function FormStep3({
       const data = await createDraw(payload); // 1) create draw on the server (saves members/exclusions)
 
       localStorage.setItem(
-        // 2) keep minimal context locally for step 4
         "secret-santa:lastGroup",
         JSON.stringify({ drawId: String(data.id), groupCode: data.groupCode })
       );
 
       const res = await fetch(
-        // 3) ask server to send verification email
         `${API}/api/groups/${data.groupCode}/initiate-verification`,
         { method: "POST" }
       );
       if (!res.ok) throw new Error("Could not send verification email."); // non-2xx → error
 
-      setStep(4); // 4) advance to the verification screen
+      setStep(4);
     } catch (err) {
       console.error(err);
       setError((prev) => ({
-        // show user-friendly message
         ...prev,
         submit: err.message || "Failed to create draw.",
       }));
@@ -285,9 +189,15 @@ export default function FormStep3({
                 <div className="exclusions-dropdown">
                   {members.map((m) => {
                     // every member is a possible receiver
-                    const checked = isExcluded(ORGANIZER, m.id); // is organizer member currently excluded?
+                    const checked = isExcluded(exclusions, ORGANIZER, m.id); // is organizer member currently excluded?
                     const disabled =
-                      !checked && wouldBreakIfAdd(ORGANIZER, m.id); // prevent impossible configuration
+                      !checked &&
+                      wouldBreakIfAdd(
+                        exclusions,
+                        participants,
+                        ORGANIZER,
+                        m.id
+                      ); // prevent impossible configuration
                     return (
                       <label key={m.id}>
                         <input
@@ -337,9 +247,19 @@ export default function FormStep3({
                     {includeOrganizer && organizerName && (
                       <label>
                         {(() => {
-                          const checked = isExcluded(member.id, ORGANIZER); // member -> organizer excluded?
+                          const checked = isExcluded(
+                            exclusions,
+                            member.id,
+                            ORGANIZER
+                          ); // member -> organizer excluded?
                           const disabled =
-                            !checked && wouldBreakIfAdd(member.id, ORGANIZER); // would break matching?
+                            !checked &&
+                            wouldBreakIfAdd(
+                              exclusions,
+                              participants,
+                              member.id,
+                              ORGANIZER
+                            ); // would break matching?
                           return (
                             <>
                               <input
@@ -361,9 +281,19 @@ export default function FormStep3({
                     {members
                       .filter((mem) => mem.id !== member.id) // no self-exclusion
                       .map((mem) => {
-                        const checked = isExcluded(member.id, mem.id); // member -> other-member excluded?
+                        const checked = isExcluded(
+                          exclusions,
+                          member.id,
+                          mem.id
+                        ); // member -> other-member excluded?
                         const disabled =
-                          !checked && wouldBreakIfAdd(member.id, mem.id); // would adding this break?
+                          !checked &&
+                          wouldBreakIfAdd(
+                            exclusions,
+                            participants,
+                            member.id,
+                            mem.id
+                          ); // would adding this break?
                         return (
                           <label key={mem.id}>
                             <input
